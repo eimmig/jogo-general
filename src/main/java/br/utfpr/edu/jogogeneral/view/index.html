@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="UTF-8">
+    <title>Jogo General</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-image: url('./images/background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 5%;
+        }
+
+        .top-logo {
+            background-image: url('./images/logo.png');
+            width: 575px;
+            height: 137px;
+            background-size: cover;
+            margin: -45px auto 0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .button-column-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            width: 45%;
+            padding: 15px;
+        }
+
+        .button-column-right .last-button {
+            margin-top: 15%;
+            width: 30%;
+            background-color: #994203;
+            border: 2px solid #000000;
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 20px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .button-column-right .last-button:hover {
+            transform: scale(1.1);
+            background-color: #ff3c00;
+            animation: blink 0.2s linear 2 alternate;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .button-column-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 45%;
+            padding: 15px;
+        }
+
+        .button {
+            background-color: #994203;
+            border: 2px solid #000000;
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border-radius: 20px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            background-color: #ff3c00;
+        }
+    </style>
+</head>
+<body>
+<div class="top-logo"></div>
+<div class="button-container">
+    <div class="button-column-left">
+        <div class="button">Button 1</div>
+        <div class="button">Button 2</div>
+        <div class="button">Button 3</div>
+    </div>
+    <div style="width: 10%;"></div>
+    <div class="button-column-right">
+        <div class="button">Button 5</div>
+        <div class="button">Button 6</div>
+        <div class="button">Button 7</div>
+        <div class="button last-button"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+    </div>
+</div>
+</body>
+</html>
