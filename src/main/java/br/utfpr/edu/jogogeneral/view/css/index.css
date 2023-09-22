@@ -1,0 +1,252 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-image: url('../../images/background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 5%;
+}
+
+.top-logo {
+    background-image: url('../../images/logo.png');
+    width: 575px;
+    height: 137px;
+    background-size: cover;
+    margin: -45px auto 0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.button-column-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 45%;
+    padding: 15px;
+}
+
+.button-column-right .last-button {
+    margin-top: 15%;
+    width: 40%;
+    background-color: #994203;
+    border: 2px solid #000000;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    text-align: left;
+    padding: 20px;
+    border-radius: 20px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.button .fa-door-open {
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.button-column-right .last-button:hover {
+    transform: scale(1.1);
+    background-color: #ff3c00;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.button-column-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 45%;
+    padding: 15px;
+}
+
+.button {
+    background-color: #994203;
+    border: 2px solid #000000;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border-radius: 20px;
+    transition: transform 0.2s, background-color 0.2s;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: scale(1.1);
+    background-color: #ff3c00;
+}
+
+
+.scene {
+    perspective: 600px;
+    width: 1000px;
+    height: 200px;
+    margin: 50px auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.cube {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg) rotateY(0deg);
+    transition: transform 2s ease-in-out;
+    background-color: #8B4513;
+}
+
+.face {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #0e0400;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #8B4513;
+}
+
+.front  { transform: rotateY(0deg) translateZ(40px); }
+.back   { transform: rotateY(180deg) translateZ(40px); }
+.right  { transform: rotateY(90deg) translateZ(40px); }
+.left   { transform: rotateY(-90deg) translateZ(40px); }
+.top    { transform: rotateX(90deg) translateZ(40px); }
+.bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+
+.table thead {
+    background-color: #ad2e07;
+    color: #000000;
+}
+.table tbody td {
+    background-color: #994203;
+    color: #000000;
+}
+
+.table tbody td:hover {
+    background-color: #632c04;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.transition-fade-in {
+    animation-name: fadeIn;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+}
+
+.transition-fade-out {
+    animation-name: fadeOut;
+    animation-duration: 1s; 
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    display: none !important;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 300px;
+    margin: 15% auto;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+    font-size: 24px;
+    color: #8B4513; /* Marrom */
+    margin-bottom: 20px;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.modal-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-button-confirm {
+    background-color: #8B4513; /* Marrom */
+    color: #fff;
+}
+
+.modal-button-cancel {
+    background-color: #ccc;
+    color: #000;
+}
+
+/* Ícone de cadastro */
+.fa-cadastro {
+    font-size: 24px;
+    color: #8B4513; /* Marrom */
+    margin-right: 10px;
+}
