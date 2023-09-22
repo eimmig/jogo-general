@@ -9,8 +9,7 @@ import java.io.IOException;
 @SpringBootApplication
 public class UsaCampeonato {
 	public static void main(String[] args) {
-		// Caminho para o arquivo index.html
-		String filePath = "src/main/java/br/utfpr/edu/jogogeneral/view/index.html";
+		String url = "http://localhost:8080/";
 
 		// Verifica o sistema operacional
 		String osName = System.getProperty("os.name").toLowerCase();
@@ -19,10 +18,10 @@ public class UsaCampeonato {
 			Process process;
 			if (osName.contains("win")) {
 				// Sistema Windows
-				process = Runtime.getRuntime().exec("cmd /c start " + filePath);
+				process = Runtime.getRuntime().exec("cmd /c start " + url);
 			} else if (osName.contains("nix") || osName.contains("nux") || osName.contains("mac")) {
 				// Sistemas Linux e macOS
-				process = Runtime.getRuntime().exec("xdg-open " + filePath);
+				process = Runtime.getRuntime().exec("xdg-open " + url);
 			} else {
 				// Outros sistemas operacionais (trate de acordo com suas necessidades)
 				System.out.println("Sistema operacional não suportado.");
