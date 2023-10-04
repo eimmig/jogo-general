@@ -3,8 +3,8 @@ package br.utfpr.edu.jogogeneral.controller;
 import br.utfpr.edu.jogogeneral.model.Dado;
 import br.utfpr.edu.jogogeneral.model.Jogador;
 import br.utfpr.edu.jogogeneral.model.JogoGeneral;
-import br.utfpr.edu.jogogeneral.ultils.CustomResponse;
-import br.utfpr.edu.jogogeneral.ultils.RequestPessoa;
+import br.utfpr.edu.jogogeneral.ultils.JogadorDTO;
+import br.utfpr.edu.jogogeneral.ultils.IncluirJogadorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,10 +40,36 @@ public class ApplicationController {
     }
 
     @PostMapping(value = "/incluirJogador", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomResponse<Jogador>> incluirJogadores(@RequestBody RequestPessoa pessoa) {
+    public ResponseEntity<Object> incluirJogadores(@RequestBody IncluirJogadorDTO pessoa) {
         Jogador jogador = new Jogador(pessoa.getNome(), pessoa.getTipo(), this.jogo, this.campeonato.getNumJogadores());
         this.campeonato.incluirJogador(jogador);
-        CustomResponse<Jogador> responseObject = new CustomResponse<>(jogador, "Jogador incluído com sucesso");
-        return new ResponseEntity<>(responseObject, HttpStatus.OK);
+        JogadorDTO responseObject = new JogadorDTO(jogador, "Jogador incluído com sucesso");
+        return ResponseEntity.ok(responseObject);
+    }
+
+    @DeleteMapping("/remover/{id}")
+    public ResponseEntity<String> removerJogador(@PathVariable Long id) {
+        if (id != null) {
+            Jogador[] jogadores = this.campeonato.getJogadores();
+
+            Jogador[] novoArray = new Jogador[jogadores.length - 1]; //crio um array com jogadores -1
+
+            int novoIndice = 0;
+
+            for (int i = 0; (i < jogadores.length); i++) {
+                if (jogadores[i] == null) {
+                    break;
+                }
+
+                if (jogadores[i].getId().longValue() != id) {
+                    novoArray[novoIndice] = jogadores[i];
+                    novoIndice++;
+                }
+            }
+            this.campeonato.setJogadores(novoArray);
+            return ResponseEntity.ok("Item excluído com sucesso");
+        } else {
+            return ResponseEntity.badRequest().body("ID inválido");
+        }
     }
 }

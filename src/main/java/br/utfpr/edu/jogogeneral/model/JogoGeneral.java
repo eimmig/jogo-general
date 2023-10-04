@@ -4,14 +4,10 @@ import br.utfpr.edu.jogogeneral.controller.Campeonato;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize
 public class JogoGeneral {
-    @JsonProperty("dados")
     private Dado[] dados;
-    @JsonProperty("jogadas")
     private int[] jogadas;
 
-    @JsonProperty("campeonato")
     private Campeonato campeonato;
 
     public JogoGeneral() {

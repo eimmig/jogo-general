@@ -1,11 +1,11 @@
 package br.utfpr.edu.jogogeneral.ultils;
 
 
-public class RequestPessoa {
+public class IncluirJogadorDTO {
     private String nome;
     private String tipo;
 
-    public RequestPessoa(String nome, String tipo) {
+    public IncluirJogadorDTO(String nome, String tipo) {
         this.nome = nome;
         this.tipo = tipo;
     }

@@ -58,6 +58,10 @@ public class Jogador {
         this.jogoG = jogoG;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Jogador: " + nome + "\nTipo de Jogador: " + tipoJogador + "\nid: "  + id + "\n" + jogoG;
