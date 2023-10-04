@@ -5,16 +5,20 @@ public class Jogador {
     private String tipoJogador;
     private JogoGeneral jogoG;
 
-    public Jogador(String nome, String tipoJogador, JogoGeneral jogoG) {
+    private final Integer id;
+
+    public Jogador(String nome, String tipoJogador, JogoGeneral jogoG, int id) {
         this.nome = nome;
         this.tipoJogador = tipoJogador;
         this.jogoG = jogoG;
+        this.id = id;
     }
 
-    public Jogador(JogoGeneral jogoG) {
+    public Jogador(JogoGeneral jogoG, int id) {
         this.nome = "";
         this.tipoJogador = "";
         this.jogoG = jogoG;
+        this.id = id;
     }
 
     public void jogarDados() {
@@ -56,6 +60,6 @@ public class Jogador {
 
     @Override
     public String toString() {
-        return "Jogador: " + nome + "\nTipo de Jogador: " + tipoJogador + "\n" + jogoG;
+        return "Jogador: " + nome + "\nTipo de Jogador: " + tipoJogador + "\nid: "  + id + "\n" + jogoG;
     }
 }

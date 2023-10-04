@@ -1,8 +1,18 @@
 package br.utfpr.edu.jogogeneral.model;
 
+import br.utfpr.edu.jogogeneral.controller.Campeonato;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonSerialize
 public class JogoGeneral {
+    @JsonProperty("dados")
     private Dado[] dados;
+    @JsonProperty("jogadas")
     private int[] jogadas;
+
+    @JsonProperty("campeonato")
+    private Campeonato campeonato;
 
     public JogoGeneral() {
         dados = new Dado[5];
@@ -13,12 +23,21 @@ public class JogoGeneral {
         jogadas = new int[13];
     }
 
-    public void rolarDados() {
+    public Dado[] rolarDados() {
         for (int i = 0; i < 5; i++) {
             dados[i].roll();
         }
+
+        return dados;
     }
 
+    public void setCampeonato(Campeonato campeonato) {
+        this.campeonato = campeonato;
+    }
+
+    public Campeonato getCampeonato(Campeonato campeonato) {
+        return this.campeonato;
+    }
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

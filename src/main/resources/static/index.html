@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <title>Jogo General</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="view/css/index.css">
-    <link href="view/node_modules/toastr/toastr.scss" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body>
     <div class="top-logo"></div>
@@ -71,8 +73,8 @@
             <div class="modal-title">
                 <i class="fa-solid fa-user-plus" style="color: #000000;"></i> Cadastro
             </div>
-            <input class="modal-input" type="text" placeholder="Nome">
-            <select class="modal-input">
+            <input id="nome-jogador" class="modal-input" type="text" placeholder="Nome">
+            <select class="modal-input" id="tipo-jogador">
                 <option value="M">Máquina</option>
                 <option value="H">Humano</option>
             </select>
@@ -165,7 +167,6 @@
     </div>
 
     <script>
-        debugger;
         const cubes = document.querySelectorAll('.cube');
         const rollButton = document.getElementById('roll-button');
         const mostrarTabela = document.getElementById('mostrarTabela');
@@ -176,91 +177,97 @@
         const openRemovePlayerModal = document.getElementById('openRemovePlayerModal');
         const playerSelect = document.getElementById('playerSelect');
         const cancelButton = document.querySelector('.modal-button-cancel');
+        const confirmButton = document.querySelector('.modal-button-confirm');
         const cancelButtonRemove = document.querySelector('.modal-button-cancel-remove');
         const table = document.querySelector('table');
 
         //array de objetos jogador
-        const players = [
-            { id: 1, nome: 'Jogador 1' },
-            { id: 2, nome: 'Jogador 2' },
-            { id: 3, nome: 'Jogador 3' }
-        ];
+        var players = [];
 
 
         //DADOS
         let rolling = false;
         rollButton.addEventListener('click', () => {
+            debugger;
             if (!rolling) {
                 rolling = true;
 
-                const results = []; // Armazenar os resultados dos dados
+                const results = [];
 
                 let cubesMoving = cubes.length; // Inicializa com o número total de cubos
+                var index = 0;
 
-                cubes.forEach(cube => {
-                    cube.style.transition = 'transform 2s ease-in-out';
+                axios.get('/controller/rolarDados')
+                    .then(response => {
+                        debugger;
+                        const responseData = response.data;
 
-                    // Simule um resultado aleatório (de 1 a 6)
-                    const result = Math.floor(Math.random() * 6) + 1;
-                    results.push(result); // Adicionar o resultado ao array de resultados
+                        cubes.forEach(cube => {
+                            cube.style.transition = 'transform 2s ease-in-out';
 
-                    const rotations = 5 + Math.floor(Math.random() * 5); // Número de rotações aleatórias
+                            const result = responseData[index];
+                            index++;
+                            results.push(result);
 
-                    // Gire o dado aleatoriamente antes de parar na face do resultado
-                    const randomX = Math.floor(Math.random() * 360);
-                    const randomY = Math.floor(Math.random() * 360);
+                            const rotations = 5 + Math.floor(Math.random() * 5);
 
-                    setTimeout(() => {
-                        cube.style.transform = `rotateX(${randomX}deg) rotateY(${randomY}deg)`;
-                    }, 100);
+                            // Gira o dado aleatoriamente antes de parar na face do resultado
+                            const randomX = Math.floor(Math.random() * 360);
+                            const randomY = Math.floor(Math.random() * 360);
 
-                    setTimeout(() => {
-                        cube.style.transform = `rotateX(0deg) rotateY(0deg)`;
-                        cube.style.transition = 'transform 0.5s ease-in-out';
+                            setTimeout(() => {
+                                cube.style.transform = `rotateX(${randomX}deg) rotateY(${randomY}deg)`;
+                            }, 100);
 
-                        // Defina a face do resultado para cima
-                        switch (result) {
-                            case 1:
-                                cube.style.transform = 'rotateX(0deg) rotateY(0deg)';
-                                break;
-                            case 2:
-                                cube.style.transform = 'rotateX(0deg) rotateY(180deg)';
-                                break;
-                            case 3:
-                                cube.style.transform = 'rotateX(0deg) rotateY(270deg)';
-                                break;
-                            case 4:
-                                cube.style.transform = 'rotateX(0deg) rotateY(90deg)';
-                                break;
-                            case 5:
-                                cube.style.transform = 'rotateX(-90deg) rotateY(0deg)';
-                                break;
-                            case 6:
-                                cube.style.transform = 'rotateX(90deg) rotateY(0deg)';
-                                break;
-                        }
+                            setTimeout(() => {
+                                cube.style.transform = `rotateX(0deg) rotateY(0deg)`;
+                                cube.style.transition = 'transform 0.5s ease-in-out';
+                                debugger;
+                                // Define a face do resultado para cima (substitua pelos seus próprios valores)
+                                switch (result) {
+                                    case 1:
+                                        cube.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                                        break;
+                                    case 2:
+                                        cube.style.transform = 'rotateX(0deg) rotateY(180deg)';
+                                        break;
+                                    case 3:
+                                        cube.style.transform = 'rotateX(0deg) rotateY(270deg)';
+                                        break;
+                                    case 4:
+                                        cube.style.transform = 'rotateX(0deg) rotateY(90deg)';
+                                        break;
+                                    case 5:
+                                        cube.style.transform = 'rotateX(-90deg) rotateY(0deg)';
+                                        break;
+                                    case 6:
+                                        cube.style.transform = 'rotateX(90deg) rotateY(0deg)';
+                                        break;
+                                }
 
-                        // Verificar se o cubo parou de se mover
-                        cube.addEventListener('transitionend', () => {
-                            cubesMoving--;
+                                // Verificar se o cubo parou de se mover
+                                cube.addEventListener('transitionend', () => {
+                                    debugger;
+                                    cubesMoving--;
 
-                            if (cubesMoving === 0) {
-                                // Todos os cubos pararam de se mover
-                                setTimeout(() => {
-                                    // Apresentar os resultados em um único alert
-                                    const resultsString = results.join(', ');
-                                    alert(`Resultados: ${resultsString}`);
-                                    rolling = false; // Redefina a variável para permitir futuras rolagens
-                                }, 500);
-                            }
+                                    if (cubesMoving === 0) {
+                                        // Todos os cubos pararam de se mover
+                                        setTimeout(() => {
+                                            // Apresentar os resultados em um único alert
+                                            toastr.success("Dados rolados com sucesso!")
+                                            rolling = false; // Redefine a variável para permitir futuras rolagens
+                                        }, 500);
+                                    }
+                                });
+                            }, 2000 + rotations * 100); // Tempo adicional com base no número de rotações aleatórias
                         });
-                    }, 2000 + rotations * 100); // Tempo adicional com base no número de rotações aleatórias
-                });
+                    })
+                    .catch(error => {
+                        console.error('Erro ao fazer a solicitação GET:', error);
+                    });
             }
         });
-
         //FIM DADOS
-
 
         //CARTELA RESULTADOS
         function addColumnToHeader() {
@@ -313,6 +320,24 @@
             }
         });
 
+        confirmButton.addEventListener('click', () => {
+            const data = {
+                nome: $('#nome-jogador').val(),
+                tipo: $('#tipo-jogador').val()
+            };
+            axios.post('controller/incluirJogador', data)
+                .then(response => {
+                    debugger;
+                    players.push(response.data.data);
+                    toastr.success(response.data.message);
+                    modal.style.display = 'none';
+                })
+                .catch(error => {
+                    toastr.error(error.data);
+                    modal.style.display = 'none';
+                });
+        });
+
         //FIM MODAL ADICIONAR PLAYERS
 
         //MODAL REMOVER PLAYERS
@@ -340,20 +365,18 @@
 
         //SAIR DA APLICAÇÃO
         document.getElementById('fecharAplicacao').addEventListener('click', () => {
-            axios.post('/shutdown/exit')
+            axios.post('/controller/exit')
                 .then(response => {
                     console.log(response.data);
                 })
                 .catch(error => {
                     console.error(error);
                 });
-            alert("Finalizado Com Sucesso")
+            toastr.success("A aplicação será finalizada em alguns segundos!");
         });
         //FIM SAIR DA APLICAÇÃO
     </script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="view/node_modules/toastr/toastr.js"></script>
 </body>
 </html>

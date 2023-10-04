@@ -7,6 +7,23 @@ import java.util.Arrays;
 
 public class Campeonato {
     private Jogador[] jogadores;
+
+    public int getNumJogadores() {
+        return numJogadores;
+    }
+
+    public Jogador[] getJogadores() {
+        return jogadores;
+    }
+
+    public void setNumJogadores(int numJogadores) {
+        this.numJogadores = numJogadores;
+    }
+
+    public void setJogadores(Jogador[] jogadores) {
+        this.jogadores = jogadores;
+    }
+
     private int numJogadores;
 
     public Campeonato(int maxJogadores) {
