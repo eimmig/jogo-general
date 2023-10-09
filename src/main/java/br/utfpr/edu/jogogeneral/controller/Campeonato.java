@@ -3,10 +3,20 @@ package br.utfpr.edu.jogogeneral.controller;
 import br.utfpr.edu.jogogeneral.model.Jogador;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Campeonato {
     private Jogador[] jogadores;
+
+    private int numJogadores;
+
+    public Campeonato(int maxJogadores) {
+        jogadores = new Jogador[maxJogadores];
+        numJogadores = 0;
+    }
 
     public int getNumJogadores() {
         return numJogadores;
@@ -22,13 +32,6 @@ public class Campeonato {
 
     public void setJogadores(Jogador[] jogadores) {
         this.jogadores = jogadores;
-    }
-
-    private int numJogadores;
-
-    public Campeonato(int maxJogadores) {
-        jogadores = new Jogador[maxJogadores];
-        numJogadores = 0;
     }
 
     public void incluirJogador(Jogador jogador) {
@@ -70,6 +73,17 @@ public class Campeonato {
     }
 
     public void gravarEmArquivo(String nomeArquivo) throws Exception {
+        Path arquivoPath = Paths.get(nomeArquivo);
+        try {
+            // Verifica se o arquivo existe
+            if (Files.exists(arquivoPath)) {
+                // Apaga o arquivo se ele existe
+                Files.delete(arquivoPath);
+            }
+        } catch (IOException e) {
+            throw  new Exception(e);
+        }
+
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
             outputStream.writeObject(jogadores);
         } catch (IOException e) {

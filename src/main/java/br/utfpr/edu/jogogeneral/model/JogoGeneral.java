@@ -1,7 +1,9 @@
 package br.utfpr.edu.jogogeneral.model;
 
 import br.utfpr.edu.jogogeneral.controller.Campeonato;
+import br.utfpr.edu.jogogeneral.ultils.CalcularPontosJogo;
 import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
+import br.utfpr.edu.jogogeneral.ultils.ValidacaoJogo;
 
 import java.io.Serializable;
 
@@ -67,22 +69,19 @@ public class JogoGeneral implements Serializable {
         return dados;
     }
 
-    public boolean validarJogada(Integer[] dados, Integer opcao) {
-        // Implementação de validação da jogada
-        return true;
+    public boolean validarJogada(int[] dados, int opcao) {
+        return ValidacaoJogo.validarJogada(dados, opcao);
     }
 
     public void pontuarJogada(JogadaDTO jogada) {
+        int opcao = jogada.getOpcao();
 
-        Integer opcao = jogada.getOpcao();
-
-        Integer[] dados = jogada.getDados();
+        int[] dados = jogada.getDados();
 
         if (validarJogada(dados, opcao)) {
-            int pontos = 0;
-            jogadas[opcao] = pontos;
+            jogadas[opcao] = CalcularPontosJogo.calcularPontos(dados, opcao);
         } else {
-            System.out.println("Jogada inválida. Os pontos não foram registrados.");
+            jogadas[opcao] = 0;
         }
     }
 }

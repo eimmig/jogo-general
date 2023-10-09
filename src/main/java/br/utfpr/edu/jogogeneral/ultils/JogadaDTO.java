@@ -1,41 +1,42 @@
 package br.utfpr.edu.jogogeneral.ultils;
 
+//esse arquivo é apenas um DTO de comunicação com o frontend, nenhum método é executado a partir dele, apeans getter e/ou setters
 
 public class JogadaDTO {
 
-    private Integer opcao;
+    private int opcao;
 
-    private Integer jogador;
+    private int jogador;
 
-    private Integer[] dados;
+    private int[] dados;
 
-    public JogadaDTO(Integer opcao, Integer jogador, Integer[] dados) {
+    public JogadaDTO(int opcao, int jogador, int[] dados) {
         this.opcao = opcao;
-        this.jogador = jogador;
         this.dados = dados;
+        this.jogador = jogador;
     }
 
-    public Integer[] getDados() {
+    public int[] getDados() {
         return dados;
     }
 
-    public void setDados(Integer[] dados) {
+    public void setDados(int[] dados) {
         this.dados = dados;
     }
 
-    public Integer getJogador() {
+    public int getJogador() {
         return jogador;
     }
 
-    public void setJogador(Integer jogador) {
+    public void setJogador(int jogador) {
         this.jogador = jogador;
     }
 
-    public Integer getOpcao() {
+    public int getOpcao() {
         return opcao;
     }
 
-    public void setOpcao(Integer opcao) {
+    public void setOpcao(int opcao) {
         this.opcao = opcao;
     }
 }

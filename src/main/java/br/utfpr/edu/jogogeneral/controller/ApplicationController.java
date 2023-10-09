@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Objects;
 
 @Controller
@@ -40,10 +39,10 @@ public class ApplicationController {
 
         int[] valores = {1,1,1,1,1};
 
-        for (int i = 0; i < jogadores.length; i++) {
-            if (Objects.equals(jogadores[i].getId(), id)){
+        for (Jogador jogador : jogadores) {
+            if (Objects.equals(jogador.getId(), id)) {
                 //chama o jogarDados para o jogador passado
-                Dado[] dados = jogadores[i].jogarDados();
+                Dado[] dados = jogador.jogarDados();
 
                 valores = new int[]{dados[0].getSideUp(), dados[1].getSideUp(), dados[2].getSideUp(), dados[3].getSideUp(), dados[4].getSideUp()};
 
@@ -73,13 +72,13 @@ public class ApplicationController {
 
             int novoIndice = 0;
 
-            for (int i = 0; (i < jogadores.length); i++) {
-                if (jogadores[i] == null) {
+            for (Jogador jogador : jogadores) {
+                if (jogador == null) {
                     break;
                 }
 
-                if (jogadores[i].getId().longValue() != id) {
-                    novoArray[novoIndice] = jogadores[i];
+                if (jogador.getId().longValue() != id) {
+                    novoArray[novoIndice] = jogador;
                     novoIndice++;
                 }
             }
@@ -104,9 +103,10 @@ public class ApplicationController {
     public ResponseEntity<String> executarJogada(@RequestBody JogadaDTO jogada) {
         Jogador[] jogadores = this.campeonato.getJogadores();
         try {
-            for (int i = 0; i < jogadores.length; i++) {
-                if (Objects.equals(jogadores[i].getId(), jogada.getJogador())) {
-                    jogadores[i].escolherJogada(jogada);
+            for (Jogador jogador : jogadores) {
+                if (Objects.equals(jogador.getId(), jogada.getJogador())) {
+                    jogador.escolherJogada(jogada);
+                    this.campeonato.gravarEmArquivo("campeonato.dat");
                     return ResponseEntity.ok("Jogada Realizada com sucesso!");
                 }
             }
@@ -118,22 +118,18 @@ public class ApplicationController {
 
     @GetMapping("/mostrarJogadas/{id}")
     public ResponseEntity<int[]> MostrarJogadas(@PathVariable Integer id) {
-
         Jogador[] jogadores = this.campeonato.getJogadores();
 
         int[] jogadas = {0,0,0,0,0,0,0,0,0,0};
 
-        for (int i = 0; i < jogadores.length; i++) {
-            if (Objects.equals(jogadores[i].getId(), id)){
+        for (Jogador jogador : jogadores) {
+            if (Objects.equals(jogador.getId(), id)) {
                 //chama o jogarDados para o jogador passado
-                jogadas = jogadores[i].mostrarJogadasExecutadas();
+                jogadas = jogador.mostrarJogadasExecutadas();
 
                 return new ResponseEntity<>(jogadas, HttpStatus.OK);
             }
         }
-
         return new ResponseEntity<>(jogadas, HttpStatus.OK);
-
-
     }
 }

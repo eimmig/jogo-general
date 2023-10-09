@@ -1,6 +1,6 @@
 package br.utfpr.edu.jogogeneral.ultils;
 
-
+//esse arquivo é apenas um DTO de comunicação com o frontend, nenhum método é executado a partir dele, apeans getter e/ou setters
 public class IncluirJogadorDTO {
     private String nome;
     private String tipo;

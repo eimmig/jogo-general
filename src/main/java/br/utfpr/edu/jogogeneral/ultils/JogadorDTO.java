@@ -4,6 +4,9 @@ import br.utfpr.edu.jogogeneral.model.Jogador;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+//esse arquivo é apenas um DTO de comunicação com o frontend, nenhum método é executado a partir dele, apeans getter e/ou setters
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JogadorDTO<T> {
     @JsonProperty("id")

@@ -34,15 +34,18 @@ const topLogo = document.querySelector('.top-logo')
 let results = [];
 
 //array de objetos jogador
-var players = [];
+let players = [];
 
 //controle de jogador na vez
-var jogadorDaVez = -1;
+let jogadorDaVez = -1;
+
+//controle de fim do jogo
+let maxRodadas = 0;
 
 //INICIAR CAMPEONATO
 startButton.addEventListener('click', () => {
 
-    if (this.players.length < 1) {
+    if (players.length < 1) {
         toastr.error("Inclua os Jogadores Primeiro!")
         return
     }
@@ -50,7 +53,6 @@ startButton.addEventListener('click', () => {
     axios.post('/controller/iniciarCampeonato')
         .then (response => {
             rollButton.classList.remove('hidden')
-            mostrarTabela.classList.remove('hidden')
             startButton.classList.add('hidden')
             toastr.success(response.data)
             jogadorDaVez++;
@@ -66,7 +68,6 @@ let rolling = false;
 rollButton.addEventListener('click', () => {
     if (!rolling && jogadorDaVez !== -1) {
         rolling = true;
-
         results = []
 
         let cubesMoving = cubes.length; // Inicializa com o número total de cubos
@@ -74,7 +75,6 @@ rollButton.addEventListener('click', () => {
 
         axios.get('/controller/rolarDados/'+ players[jogadorDaVez].id)
             .then(response => {
-                debugger;
                 const responseData = response.data;
 
                 cubes.forEach(cube => {
@@ -97,7 +97,6 @@ rollButton.addEventListener('click', () => {
                     setTimeout(() => {
                         cube.style.transform = `rotateX(0deg) rotateY(0deg)`;
                         cube.style.transition = 'transform 0.5s ease-in-out';
-                        debugger;
                         // Define a face do resultado para cima (substitua pelos seus próprios valores)
                         switch (result) {
                             case 1:
@@ -132,6 +131,15 @@ rollButton.addEventListener('click', () => {
                                     containerEscolhas.classList.remove('hidden')
                                     mostrarJogadasExecutadas.classList.remove('hidden')
                                     topLogo.classList.add('hidden')
+
+                                    if (maxRodadas+1 / players.length > 13) {
+                                        rollButton.classList.add('hidden')
+                                        mostrarTabela.classList.remove('hidden')
+                                        toastr.success("O jogo foi finalizado, por favor veja a tabela de resultados")
+                                    } else {
+                                        maxRodadas++;
+                                    }
+
                                 }, 500);
                             }
                         });
@@ -251,7 +259,6 @@ window.addEventListener('click', (event) => {
 });
 
 confirmButtonRemove.addEventListener('click', () => {
-    debugger;
     const idJogador = $('#playerSelect').val();
     axios.delete(`/controller/remover/${idJogador}`)
         .then((response) => {
@@ -290,44 +297,45 @@ document.getElementById('fecharAplicacao').addEventListener('click', () => {
 
 //FAZER JOGADA
 escolhaNumero1.addEventListener('click', () => {
-    fazerJogada(1)
+    fazerJogada(0)
 })
 escolhaNumero2.addEventListener('click', () => {
-    fazerJogada(2)
+    fazerJogada(1)
 })
 escolhaNumero3.addEventListener('click', () => {
-    fazerJogada(3)
+    fazerJogada(2)
 })
 escolhaNumero4.addEventListener('click', () => {
-    fazerJogada(4)
+    fazerJogada(3)
 })
 escolhaNumero5.addEventListener('click', () => {
-    fazerJogada(5)
+    fazerJogada(4)
 })
 escolhaNumero6.addEventListener('click', () => {
-    fazerJogada(6)
+    fazerJogada(5)
 })
 escolhaNumeroT.addEventListener('click', () => {
-    fazerJogada(7)
+    fazerJogada(6)
 })
 escolhaNumeroF.addEventListener('click', () => {
-    fazerJogada(8)
+    fazerJogada(7)
 })
 escolhaNumeroQ.addEventListener('click', () => {
-    fazerJogada(9)
+    fazerJogada(8)
 })
 escolhaNumeroS1.addEventListener('click', () => {
-    fazerJogada(10)
+    fazerJogada(9)
 })
 escolhaNumeroS2.addEventListener('click', () => {
+    fazerJogada(10)
+})
+escolhaNumeroG.addEventListener('click', () => {
     fazerJogada(11)
 })
 escolhaNumeroX.addEventListener('click', () => {
     fazerJogada(12)
 })
-escolhaNumeroG.addEventListener('click', () => {
-    fazerJogada(13)
-})
+
 function fazerJogada (opcao) {
     axios.post('/controller/executarJogada', {"opcao" : opcao, "jogador" : players[jogadorDaVez].id, "dados" : results})
         .then(response => {
@@ -347,7 +355,6 @@ function fazerJogada (opcao) {
         jogadorDaVez++
     }
 }
-
 //FIM FAZER JOGADA
 
 //MOSTRAR JOGADAS EXECUTADAS
@@ -355,6 +362,20 @@ mostrarJogadasExecutadas.addEventListener('click', () => {
     axios.get('/controller/mostrarJogadas/'+ players[jogadorDaVez].id)
         .then(response => {
             console.log(response.data);
+            dados = response.data
+            $('#escolha1').val(dados[0])
+            $('#escolha2').val(dados[1])
+            $('#escolha3').val(dados[2])
+            $('#escolha4').val(dados[3])
+            $('#escolha5').val(dados[4])
+            $('#escolha6').val(dados[5])
+            $('#escolha7').val(dados[6])
+            $('#escolha8').val(dados[7])
+            $('#escolha9').val(dados[8])
+            $('#escolha10').val(dados[9])
+            $('#escolha11').val(dados[10])
+            $('#escolha12').val(dados[11])
+            $('#escolha13').val(dados[12])
             toastr.success("Jogadas Recuperadas com sucesso!")
             document.getElementById("modal-escolhas").style.display = "block";
         })
