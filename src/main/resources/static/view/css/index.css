@@ -314,3 +314,70 @@ body {
     transform: scale(1.1);
     background-color: #ff3c00;
 }
+
+.container-escolhas {
+    margin-top: -5%;
+}
+
+
+
+.modal-escolhas-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    max-width: 50%;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    color: red;
+}
+
+.close:hover {
+    color: #ff0000;
+}
+
+h2 {
+    font-size: 24px;
+    color: #ff6600;
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 2px solid #333;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #ff9900;
+}
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.column {
+    flex: 0 0 calc(14% - 10px); /* 7 inputs em uma linha */
+    margin-right: 10px;
+}

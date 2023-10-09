@@ -20,14 +20,15 @@ const escolhaNumero3 = document.querySelector('#escolha-numero-3');
 const escolhaNumero4 = document.querySelector('#escolha-numero-4');
 const escolhaNumero5 = document.querySelector('#escolha-numero-5');
 const escolhaNumero6 = document.querySelector('#escolha-numero-6');
-const escolhaNumeroT = document.querySelector('#escolha-numero-T');
-const escolhaNumeroQ = document.querySelector('#escolha-numero-Q');
-const escolhaNumeroF = document.querySelector('#escolha-numero-F');
-const escolhaNumeroS1 = document.querySelector('#escolha-numero-S+');
-const escolhaNumeroS2 = document.querySelector('#escolha-numero-S-');
-const escolhaNumeroG = document.querySelector('#escolha-numero-G');
-const escolhaNumeroX = document.querySelector('#escolha-numero-X');
+const escolhaNumeroT = document.querySelector('#escolha-numero-7');
+const escolhaNumeroQ = document.querySelector('#escolha-numero-8');
+const escolhaNumeroF = document.querySelector('#escolha-numero-9');
+const escolhaNumeroS1 = document.querySelector('#escolha-numero-10');
+const escolhaNumeroS2 = document.querySelector('#escolha-numero-11');
+const escolhaNumeroG = document.querySelector('#escolha-numero-12');
+const escolhaNumeroX = document.querySelector('#escolha-numero-13');
 const mostrarJogadasExecutadas = document.querySelector('#mostrar-jogadas-executadas');
+const topLogo = document.querySelector('.top-logo')
 
 //vai armazenar o resultado
 let results = [];
@@ -129,6 +130,8 @@ rollButton.addEventListener('click', () => {
                                     toastr.success("Dados rolados com sucesso!")
                                     rolling = false; // Redefine a variável para permitir futuras rolagens
                                     containerEscolhas.classList.remove('hidden')
+                                    mostrarJogadasExecutadas.classList.remove('hidden')
+                                    topLogo.classList.add('hidden')
                                 }, 500);
                             }
                         });
@@ -166,10 +169,12 @@ function addRowsToTable() {
 
 mostrarTabela.addEventListener('click', () => {
     if (tabelaContainer.classList.contains('transition-fade-out')) {
+        topLogo.classList.add('hidden')
         tabelaContainer.classList.remove('transition-fade-out');
         tabelaContainer.style.display = 'block';
         mostrarTabela.innerHTML = '<i class="fa-solid fa-eye-slash" style="color: #000000;"></i> Ocultar cartela de resultados';
     } else {
+        topLogo.classList.remove('hidden')
         tabelaContainer.classList.add('transition-fade-out');
         mostrarTabela.innerHTML = '<i class="fa-solid fa-table-list" style="color: #000000;"></i> Cartela de resultados';
     }
@@ -329,6 +334,8 @@ function fazerJogada (opcao) {
             console.log(response.data);
             toastr.success(response.data)
             containerEscolhas.classList.add('hidden')
+            mostrarJogadasExecutadas.classList.add('hidden')
+            topLogo.classList.remove('hidden')
         })
         .catch(error => {
             console.error(error);
@@ -348,10 +355,14 @@ mostrarJogadasExecutadas.addEventListener('click', () => {
     axios.get('/controller/mostrarJogadas/'+ players[jogadorDaVez].id)
         .then(response => {
             console.log(response.data);
-            toastr.success(response.data)
+            toastr.success("Jogadas Recuperadas com sucesso!")
+            document.getElementById("modal-escolhas").style.display = "block";
         })
         .catch(error => {
             console.error(error);
         });
 })
+document.getElementById("closeModalBtn").addEventListener("click", function() {
+    document.getElementById("modal-escolhas").style.display = "none";
+});
 //FIM MOSTRAR JOGADAS EXECUTADAS
