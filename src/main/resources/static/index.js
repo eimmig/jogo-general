@@ -30,7 +30,7 @@ const escolhaNumeroX = document.querySelector('#escolha-numero-X');
 const mostrarJogadasExecutadas = document.querySelector('#mostrar-jogadas-executadas');
 
 //vai armazenar o resultado
-const results = [];
+let results = [];
 
 //array de objetos jogador
 var players = [];
@@ -66,7 +66,7 @@ rollButton.addEventListener('click', () => {
     if (!rolling && jogadorDaVez !== -1) {
         rolling = true;
 
-        this.results = []
+        results = []
 
         let cubesMoving = cubes.length; // Inicializa com o número total de cubos
         var index = 0;
@@ -81,7 +81,7 @@ rollButton.addEventListener('click', () => {
 
                     const result = responseData[index];
                     index++;
-                    this.results.push(result);
+                    results.push(result);
 
                     const rotations = 5 + Math.floor(Math.random() * 5);
 
@@ -324,7 +324,7 @@ escolhaNumeroG.addEventListener('click', () => {
     fazerJogada(13)
 })
 function fazerJogada (opcao) {
-    axios.post('/controller/executarJogada', {"opcao" : opcao, "jogador" : players[jogadorDaVez].id, "dados" : this.results})
+    axios.post('/controller/executarJogada', {"opcao" : opcao, "jogador" : players[jogadorDaVez].id, "dados" : results})
         .then(response => {
             console.log(response.data);
             toastr.success(response.data)
