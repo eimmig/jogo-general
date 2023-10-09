@@ -9,6 +9,15 @@ import java.io.IOException;
 @SpringBootApplication
 public class UsaCampeonato {
 	public static void main(String[] args) {
+
+		// Inicialize o aplicativo Spring Boot
+		SpringApplication.run(UsaCampeonato.class, args);
+
+		menu();
+	}
+
+	public static void  menu () {
+
 		String url = "http://localhost:8080/";
 
 		// Verifica o sistema operacional
@@ -33,9 +42,6 @@ public class UsaCampeonato {
 			if (exitCode != 0) {
 				System.out.println("Erro ao abrir o navegador.");
 			}
-
-			// Inicialize o aplicativo Spring Boot
-			SpringApplication.run(UsaCampeonato.class, args);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}

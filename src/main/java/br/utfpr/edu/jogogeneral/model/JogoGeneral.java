@@ -1,10 +1,11 @@
 package br.utfpr.edu.jogogeneral.model;
 
 import br.utfpr.edu.jogogeneral.controller.Campeonato;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
 
-public class JogoGeneral {
+import java.io.Serializable;
+
+public class JogoGeneral implements Serializable {
     private Dado[] dados;
     private int[] jogadas;
 
@@ -19,14 +20,6 @@ public class JogoGeneral {
         jogadas = new int[13];
     }
 
-    public Dado[] rolarDados() {
-        for (int i = 0; i < 5; i++) {
-            dados[i].roll();
-        }
-
-        return dados;
-    }
-
     public void setCampeonato(Campeonato campeonato) {
         this.campeonato = campeonato;
     }
@@ -34,6 +27,23 @@ public class JogoGeneral {
     public Campeonato getCampeonato(Campeonato campeonato) {
         return this.campeonato;
     }
+
+    public Dado[] getDados() {
+        return dados;
+    }
+
+    public void setDados(Dado[] dados) {
+        this.dados = dados;
+    }
+
+    public int[] getJogadas() {
+        return jogadas;
+    }
+
+    public void setJogadas(int[] jogadas) {
+        this.jogadas = jogadas;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -49,14 +59,28 @@ public class JogoGeneral {
         return result.toString();
     }
 
-    public boolean validarJogada(int jogada) {
+    public Dado[] rolarDados() {
+        for (int i = 0; i < 5; i++) {
+            dados[i].roll();
+        }
+
+        return dados;
+    }
+
+    public boolean validarJogada(Integer[] dados, Integer opcao) {
         // Implementação de validação da jogada
         return true;
     }
 
-    public void pontuarJogada(int jogada, int pontos) {
-        if (validarJogada(jogada)) {
-            jogadas[jogada - 1] = pontos;
+    public void pontuarJogada(JogadaDTO jogada) {
+
+        Integer opcao = jogada.getOpcao();
+
+        Integer[] dados = jogada.getDados();
+
+        if (validarJogada(dados, opcao)) {
+            int pontos = 0;
+            jogadas[opcao] = pontos;
         } else {
             System.out.println("Jogada inválida. Os pontos não foram registrados.");
         }

@@ -53,9 +53,11 @@ public class Campeonato {
         System.out.println("Jogador não encontrado.");
     }
 
-    public void iniciarCampeonato() {
-        for (int i = 0; i < numJogadores; i++) {
-            jogadores[i].jogarDados();
+    public void iniciarCampeonato() throws Exception {
+        try {
+            gravarEmArquivo("campeonato.dat");
+        } catch (Exception e) {
+            throw new Exception(e);
         }
     }
 
@@ -67,12 +69,11 @@ public class Campeonato {
         }
     }
 
-    public void gravarEmArquivo(String nomeArquivo) {
+    public void gravarEmArquivo(String nomeArquivo) throws Exception {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
             outputStream.writeObject(jogadores);
-            System.out.println("Dados gravados em arquivo com sucesso.");
         } catch (IOException e) {
-            System.out.println("Erro ao gravar em arquivo: " + e.getMessage());
+            throw new Exception(e);
         }
     }
 

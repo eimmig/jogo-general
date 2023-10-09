@@ -1,5 +1,6 @@
 const cubes = document.querySelectorAll('.cube');
 const rollButton = document.getElementById('roll-button');
+const startButton = document.getElementById('start-button');
 const mostrarTabela = document.getElementById('mostrarTabela');
 const tabelaContainer = document.getElementById('tabelaContainer');
 const modal = document.getElementById('modal');
@@ -12,23 +13,65 @@ const confirmButton = document.querySelector('.modal-button-confirm');
 const confirmButtonRemove = document.querySelector('.modal-button-confirm-remove');
 const cancelButtonRemove = document.querySelector('.modal-button-cancel-remove');
 const table = document.querySelector('table');
+const containerEscolhas = document.querySelector('.container-escolhas');
+const escolhaNumero1 = document.querySelector('#escolha-numero-1');
+const escolhaNumero2 = document.querySelector('#escolha-numero-2');
+const escolhaNumero3 = document.querySelector('#escolha-numero-3');
+const escolhaNumero4 = document.querySelector('#escolha-numero-4');
+const escolhaNumero5 = document.querySelector('#escolha-numero-5');
+const escolhaNumero6 = document.querySelector('#escolha-numero-6');
+const escolhaNumeroT = document.querySelector('#escolha-numero-T');
+const escolhaNumeroQ = document.querySelector('#escolha-numero-Q');
+const escolhaNumeroF = document.querySelector('#escolha-numero-F');
+const escolhaNumeroS1 = document.querySelector('#escolha-numero-S+');
+const escolhaNumeroS2 = document.querySelector('#escolha-numero-S-');
+const escolhaNumeroG = document.querySelector('#escolha-numero-G');
+const escolhaNumeroX = document.querySelector('#escolha-numero-X');
+const mostrarJogadasExecutadas = document.querySelector('#mostrar-jogadas-executadas');
+
+//vai armazenar o resultado
+const results = [];
 
 //array de objetos jogador
 var players = [];
 
+//controle de jogador na vez
+var jogadorDaVez = -1;
+
+//INICIAR CAMPEONATO
+startButton.addEventListener('click', () => {
+
+    if (this.players.length < 1) {
+        toastr.error("Inclua os Jogadores Primeiro!")
+        return
+    }
+
+    axios.post('/controller/iniciarCampeonato')
+        .then (response => {
+            rollButton.classList.remove('hidden')
+            mostrarTabela.classList.remove('hidden')
+            startButton.classList.add('hidden')
+            toastr.success(response.data)
+            jogadorDaVez++;
+        })
+        .catch(error => {
+            console.error('Erro ao fazer a solicitação POST:', error)
+        });
+})
+//FIM INICIAR CAMPEONATO
 
 //DADOS
 let rolling = false;
 rollButton.addEventListener('click', () => {
-    if (!rolling) {
+    if (!rolling && jogadorDaVez !== -1) {
         rolling = true;
 
-        const results = [];
+        this.results = []
 
         let cubesMoving = cubes.length; // Inicializa com o número total de cubos
         var index = 0;
 
-        axios.get('/controller/rolarDados')
+        axios.get('/controller/rolarDados/'+ players[jogadorDaVez].id)
             .then(response => {
                 debugger;
                 const responseData = response.data;
@@ -38,7 +81,7 @@ rollButton.addEventListener('click', () => {
 
                     const result = responseData[index];
                     index++;
-                    results.push(result);
+                    this.results.push(result);
 
                     const rotations = 5 + Math.floor(Math.random() * 5);
 
@@ -85,6 +128,7 @@ rollButton.addEventListener('click', () => {
                                     // Apresentar os resultados em um único alert
                                     toastr.success("Dados rolados com sucesso!")
                                     rolling = false; // Redefine a variável para permitir futuras rolagens
+                                    containerEscolhas.classList.remove('hidden')
                                 }, 500);
                             }
                         });
@@ -99,9 +143,8 @@ rollButton.addEventListener('click', () => {
 //FIM DADOS
 
 //CARTELA RESULTADOS
-function addColumnToHeader() {
+function addColumnToHeader(newColumnHeader) {
     const headerRow = table.querySelector('thead tr');
-    const newColumnHeader = prompt('Digite o título da nova coluna:');
 
     if (newColumnHeader) {
         const newHeaderCell = document.createElement('th');
@@ -167,6 +210,8 @@ confirmButton.addEventListener('click', () => {
             option.value = jogadorCriado.id;
             option.textContent = jogadorCriado.nome;
             playerSelect.appendChild(option);
+            //adiciona ao cabeçalho da tabela de resultado
+            addColumnToHeader(response.data.nome)
             //mostra o toastr de sucesso
             toastr.success(response.data.message);
             modal.style.display = 'none';
@@ -176,7 +221,6 @@ confirmButton.addEventListener('click', () => {
             modal.style.display = 'none';
         });
 });
-
 //FIM MODAL ADICIONAR PLAYERS
 
 //MODAL REMOVER PLAYERS
@@ -238,3 +282,76 @@ document.getElementById('fecharAplicacao').addEventListener('click', () => {
     toastr.success("A aplicação será finalizada em alguns segundos!");
 });
 //FIM SAIR DA APLICAÇÃO
+
+//FAZER JOGADA
+escolhaNumero1.addEventListener('click', () => {
+    fazerJogada(1)
+})
+escolhaNumero2.addEventListener('click', () => {
+    fazerJogada(2)
+})
+escolhaNumero3.addEventListener('click', () => {
+    fazerJogada(3)
+})
+escolhaNumero4.addEventListener('click', () => {
+    fazerJogada(4)
+})
+escolhaNumero5.addEventListener('click', () => {
+    fazerJogada(5)
+})
+escolhaNumero6.addEventListener('click', () => {
+    fazerJogada(6)
+})
+escolhaNumeroT.addEventListener('click', () => {
+    fazerJogada(7)
+})
+escolhaNumeroF.addEventListener('click', () => {
+    fazerJogada(8)
+})
+escolhaNumeroQ.addEventListener('click', () => {
+    fazerJogada(9)
+})
+escolhaNumeroS1.addEventListener('click', () => {
+    fazerJogada(10)
+})
+escolhaNumeroS2.addEventListener('click', () => {
+    fazerJogada(11)
+})
+escolhaNumeroX.addEventListener('click', () => {
+    fazerJogada(12)
+})
+escolhaNumeroG.addEventListener('click', () => {
+    fazerJogada(13)
+})
+function fazerJogada (opcao) {
+    axios.post('/controller/executarJogada', {"opcao" : opcao, "jogador" : players[jogadorDaVez].id, "dados" : this.results})
+        .then(response => {
+            console.log(response.data);
+            toastr.success(response.data)
+            containerEscolhas.classList.add('hidden')
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    if (jogadorDaVez+1 > players.length-1) {
+        jogadorDaVez = 0
+    } else {
+        jogadorDaVez++
+    }
+}
+
+//FIM FAZER JOGADA
+
+//MOSTRAR JOGADAS EXECUTADAS
+mostrarJogadasExecutadas.addEventListener('click', () => {
+    axios.get('/controller/mostrarJogadas/'+ players[jogadorDaVez].id)
+        .then(response => {
+            console.log(response.data);
+            toastr.success(response.data)
+        })
+        .catch(error => {
+            console.error(error);
+        });
+})
+//FIM MOSTRAR JOGADAS EXECUTADAS

@@ -1,8 +1,9 @@
 package br.utfpr.edu.jogogeneral.model;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Dado {
+public class Dado implements Serializable {
     private int sideUp;
 
     public Dado() {

@@ -5,11 +5,14 @@ import br.utfpr.edu.jogogeneral.model.Jogador;
 import br.utfpr.edu.jogogeneral.model.JogoGeneral;
 import br.utfpr.edu.jogogeneral.ultils.JogadorDTO;
 import br.utfpr.edu.jogogeneral.ultils.IncluirJogadorDTO;
+import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/controller")
@@ -30,13 +33,27 @@ public class ApplicationController {
         return "Ok";
     }
 
-    @GetMapping("/rolarDados")
-    public ResponseEntity<int[]> rolarDados() {
-        Dado[] dados = this.jogo.rolarDados();
+    @GetMapping("/rolarDados/{id}")
+    public ResponseEntity<int[]> rolarDados(@PathVariable Integer id) {
 
-        int[] valores = {dados[0].getSideUp(), dados[1].getSideUp(), dados[2].getSideUp(), dados[3].getSideUp(), dados[4].getSideUp()};
+        Jogador[] jogadores = this.campeonato.getJogadores();
+
+        int[] valores = {1,1,1,1,1};
+
+        for (int i = 0; i < jogadores.length; i++) {
+            if (Objects.equals(jogadores[i].getId(), id)){
+                //chama o jogarDados para o jogador passado
+                Dado[] dados = jogadores[i].jogarDados();
+
+                valores = new int[]{dados[0].getSideUp(), dados[1].getSideUp(), dados[2].getSideUp(), dados[3].getSideUp(), dados[4].getSideUp()};
+
+                return new ResponseEntity<>(valores, HttpStatus.OK);
+            }
+        }
 
         return new ResponseEntity<>(valores, HttpStatus.OK);
+
+
     }
 
     @PostMapping(value = "/incluirJogador", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,9 +84,56 @@ public class ApplicationController {
                 }
             }
             this.campeonato.setJogadores(novoArray);
-            return ResponseEntity.ok("Item excluído com sucesso");
+            return ResponseEntity.ok("Jogador excluído com sucesso");
         } else {
             return ResponseEntity.badRequest().body("ID inválido");
         }
+    }
+
+    @PostMapping("/iniciarCampeonato")
+    public ResponseEntity<String> iniciarCampeonato() {
+        try {
+            this.campeonato.iniciarCampeonato();
+            return ResponseEntity.ok("Campeonato Inciado!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao iniciar: " + e);
+        }
+    }
+
+    @PostMapping(value = "/executarJogada", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> executarJogada(@RequestBody JogadaDTO jogada) {
+        Jogador[] jogadores = this.campeonato.getJogadores();
+        try {
+            for (int i = 0; i < jogadores.length; i++) {
+                if (Objects.equals(jogadores[i].getId(), jogada.getJogador())) {
+                    jogadores[i].escolherJogada(jogada);
+                    return ResponseEntity.ok("Jogada Realizada com sucesso!");
+                }
+            }
+            return ResponseEntity.badRequest().body("Erro ao realizar jogada: Jogador não encontrado");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao realizar jogada: " + e);
+        }
+    }
+
+    @GetMapping("/mostrarJogadas/{id}")
+    public ResponseEntity<int[]> MostrarJogadas(@PathVariable Integer id) {
+
+        Jogador[] jogadores = this.campeonato.getJogadores();
+
+        int[] jogadas = {0,0,0,0,0,0,0,0,0,0};
+
+        for (int i = 0; i < jogadores.length; i++) {
+            if (Objects.equals(jogadores[i].getId(), id)){
+                //chama o jogarDados para o jogador passado
+                jogadas = jogadores[i].mostrarJogadasExecutadas();
+
+                return new ResponseEntity<>(jogadas, HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(jogadas, HttpStatus.OK);
+
+
     }
 }

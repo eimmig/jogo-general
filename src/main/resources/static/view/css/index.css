@@ -17,6 +17,10 @@ body {
     padding-top: 5%;
 }
 
+.hidden {
+    display: none;
+}
+
 .top-logo {
     background-image: url('../images/logo.png');
     width: 575px;
@@ -41,7 +45,7 @@ body {
 }
 
 .button-column-right .last-button {
-    margin-top: 15%;
+    margin-top: 100%;
     width: 40%;
     background-color: #994203;
     border: 2px solid #000000;
@@ -280,4 +284,33 @@ body {
 #tabelaCorpo::-webkit-scrollbar-thumb:horizontal {
     background-color: #ffffff;
     border-radius: 3px;
+}
+
+.tabela-escolhas {
+    display: flex;
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.escolha-numero {
+    background-color: #8B4513;
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.escolha-numero:hover {
+    transform: scale(1.1);
+    background-color: #ff3c00;
 }

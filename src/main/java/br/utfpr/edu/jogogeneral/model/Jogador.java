@@ -1,6 +1,10 @@
 package br.utfpr.edu.jogogeneral.model;
 
-public class Jogador {
+import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
+
+import java.io.Serializable;
+
+public class Jogador implements Serializable {
     private String nome;
     private String tipoJogador;
     private JogoGeneral jogoG;
@@ -21,17 +25,16 @@ public class Jogador {
         this.id = id;
     }
 
-    public void jogarDados() {
-        jogoG.rolarDados();
+    public Dado[] jogarDados() {
+        return jogoG.rolarDados();
     }
 
-    public void escolherJogada(int jogada, int pontos) {
-        jogoG.pontuarJogada(jogada, pontos);
+    public void escolherJogada(JogadaDTO jogada) {
+        jogoG.pontuarJogada(jogada);
     }
 
-    public void mostrarJogadasExecutadas() {
-        System.out.println("Jogadas Executadas: ");
-        System.out.println(jogoG);
+    public int[] mostrarJogadasExecutadas() {
+        return jogoG.getJogadas();
     }
 
     public String getNome() {
