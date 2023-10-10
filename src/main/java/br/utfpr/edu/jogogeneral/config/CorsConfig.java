@@ -5,6 +5,12 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
+/*
+*
+*  ESSE ARQUIVO É APENAS DE CONFIGURAÇÃO
+*  PRECISEI DELE PRA PERMITIR FAZER REQUEST PRA SI MESMO
+* */
+
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

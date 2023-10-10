@@ -69,19 +69,44 @@ public class JogoGeneral implements Serializable {
         return dados;
     }
 
+    //funcao que valida se a jogada é valida
+
     public boolean validarJogada(int[] dados, int opcao) {
         return ValidacaoJogo.validarJogada(dados, opcao);
     }
+
+
+    // funcao que pontua a jogada se é valida
 
     public void pontuarJogada(JogadaDTO jogada) {
         int opcao = jogada.getOpcao();
 
         int[] dados = jogada.getDados();
 
-        if (validarJogada(dados, opcao)) {
+        if (validarJogada(dados, opcao) && jogadas[opcao] == 0) {
             jogadas[opcao] = CalcularPontosJogo.calcularPontos(dados, opcao);
         } else {
             jogadas[opcao] = 0;
         }
+    }
+
+
+    /* essa funcao é responsavel por escolher em qual opção
+    * a máquina irá jogar o resultado dos dados
+    * tentei criar um método que fosse possivel sempre
+    * jogar na melhor opção
+     */
+    public static int encontrarMelhorOpcao(int[] numeros, int[] opcoes) {
+        int melhorPontuacao = 0;
+        int melhorOpcao = 0;
+
+        for (int opcao : opcoes) {
+            int pontuacao = CalcularPontosJogo.calcularPontos(numeros, opcao);
+            if (pontuacao > melhorPontuacao && ValidacaoJogo.validarJogada(numeros, opcao)) {
+                melhorPontuacao = pontuacao;
+                melhorOpcao = opcao;
+            }
+        }
+        return melhorOpcao;
     }
 }

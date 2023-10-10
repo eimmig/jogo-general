@@ -1,6 +1,6 @@
 package br.utfpr.edu.jogogeneral.ultils;
 
-//como tem funções em comum com a de validação resolvi extender da classe funcoesUtil
+//como tem funções em comum com a de validação resolvi herdar da classe funcoesUtil
 
 public class CalcularPontosJogo extends funcoesUtil {
 

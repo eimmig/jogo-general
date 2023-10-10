@@ -29,6 +29,7 @@ const escolhaNumeroG = document.querySelector('#escolha-numero-12');
 const escolhaNumeroX = document.querySelector('#escolha-numero-13');
 const mostrarJogadasExecutadas = document.querySelector('#mostrar-jogadas-executadas');
 const topLogo = document.querySelector('.top-logo')
+let mostrouTabela = false;
 
 //vai armazenar o resultado
 let results = [];
@@ -56,6 +57,7 @@ startButton.addEventListener('click', () => {
             startButton.classList.add('hidden')
             toastr.success(response.data)
             jogadorDaVez++;
+            observador.jogadorDaVez = 0;
         })
         .catch(error => {
             console.error('Erro ao fazer a solicitação POST:', error)
@@ -164,20 +166,41 @@ function addColumnToHeader(newColumnHeader) {
     }
 }
 
-function addRowsToTable() {
-    for (let i = 0; i < 13; i++) {
-        const newRow = document.createElement('tr');
-        for (let j = 0; j < table.rows[0].cells.length; j++) {
-            const newCell = document.createElement('td');
-            newRow.appendChild(newCell);
+function addRowsToTable(jogada) {
+    let soma = 0
+    for (let i = 0; i <= 13; i++) {
+        const newRow = document.getElementById("tr-"+i);
+        const newCell = document.createElement('td');
+        if (i === 13) {
+            newCell.innerHTML = soma
+        } else {
+            newCell.innerHTML = jogada.jogadas[i]
+            soma += jogada.jogadas[i]
         }
-        table.querySelector('tbody').appendChild(newRow);
+        newCell.classList.add("filho")
+        newRow.appendChild(newCell);
     }
 }
-
-mostrarTabela.addEventListener('click', () => {
+mostrarTabela.addEventListener('click', async () => {
     if (tabelaContainer.classList.contains('transition-fade-out')) {
         topLogo.classList.add('hidden')
+
+        if (!mostrouTabela) {
+            await axios.get('/controller/mostrarCartelaFinal/')
+                .then(response => {
+                    console.log(response)
+                    let jogadas = response.data.jogadas
+                    jogadas.forEach(jogada => {
+                        if (jogada) {
+                            addRowsToTable(jogada)
+                            mostrouTabela = true
+                        }
+                    })
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+            }
         tabelaContainer.classList.remove('transition-fade-out');
         tabelaContainer.style.display = 'block';
         mostrarTabela.innerHTML = '<i class="fa-solid fa-eye-slash" style="color: #000000;"></i> Ocultar cartela de resultados';
@@ -187,7 +210,6 @@ mostrarTabela.addEventListener('click', () => {
         mostrarTabela.innerHTML = '<i class="fa-solid fa-table-list" style="color: #000000;"></i> Cartela de resultados';
     }
 });
-
 //FIM CARTELA RESULTADOS
 
 //MODAL ADICIONAR PLAYERS
@@ -212,22 +234,26 @@ confirmButton.addEventListener('click', () => {
     };
     axios.post('controller/incluirJogador', data)
         .then(response => {
-            let jogadorCriado = {
-                id: response.data.id,
-                nome: response.data.nome,
-                tipo: response.data.tipo,
-            };
-            players.push(jogadorCriado);
-            //adiciona o player na lista pra remover
-            const option = document.createElement('option');
-            option.value = jogadorCriado.id;
-            option.textContent = jogadorCriado.nome;
-            playerSelect.appendChild(option);
-            //adiciona ao cabeçalho da tabela de resultado
-            addColumnToHeader(response.data.nome)
-            //mostra o toastr de sucesso
-            toastr.success(response.data.message);
-            modal.style.display = 'none';
+            if (response.data.id != -1) {
+                let jogadorCriado = {
+                    id: response.data.id,
+                    nome: response.data.nome,
+                    tipo: response.data.tipo,
+                };
+                players.push(jogadorCriado);
+                //adiciona o player na lista pra remover
+                const option = document.createElement('option');
+                option.value = jogadorCriado.id;
+                option.textContent = jogadorCriado.nome;
+                playerSelect.appendChild(option);
+                //adiciona ao cabeçalho da tabela de resultado
+                addColumnToHeader(response.data.nome)
+                //mostra o toastr de sucesso
+                toastr.success(response.data.message);
+                modal.style.display = 'none';
+            } else {
+                toastr.error(response.data.message)
+            }
         })
         .catch(error => {
             toastr.error(error.data);
@@ -350,8 +376,10 @@ function fazerJogada (opcao) {
         });
 
     if (jogadorDaVez+1 > players.length-1) {
+        observador.jogadorDaVez = 0
         jogadorDaVez = 0
     } else {
+        observador.jogadorDaVez++
         jogadorDaVez++
     }
 }
@@ -387,3 +415,50 @@ document.getElementById("closeModalBtn").addEventListener("click", function() {
     document.getElementById("modal-escolhas").style.display = "none";
 });
 //FIM MOSTRAR JOGADAS EXECUTADAS
+//CONTROLE JOGADA MAQUINA
+const observador = new Proxy({}, {
+    set: async function(target, key, value) {
+        if (key === "jogadorDaVez") {
+            if ((maxRodadas+1 / players.length > 13)) {
+                rollButton.classList.add('hidden')
+                mostrarTabela.classList.remove('hidden')
+                toastr.success("O jogo foi finalizado, por favor veja a tabela de resultados")
+                return
+            }
+            if (players[value].tipo === "M") {
+                toastr.info("Agora é vez da Maquina Jogar!")
+                await rollButton.click();
+                setTimeout(async function () {
+                    await jogadaMaquina();
+                }, 5000)
+            } else {
+                toastr.info("Agora é vez de " + players[value].nome + " Jogar!")
+            }
+        }
+        target[key] = value;
+        return true;
+    }
+});
+
+async function jogadaMaquina() {
+    await axios.post('/controller/jogadaMaquina', {"opcao" : 1, "jogador" : players[jogadorDaVez].id, "dados" : results})
+        .then(response => {
+            console.log(response.data);
+            toastr.success(response.data)
+            containerEscolhas.classList.add('hidden')
+            mostrarJogadasExecutadas.classList.add('hidden')
+            topLogo.classList.remove('hidden')
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    if (jogadorDaVez+1 > players.length-1) {
+        observador.jogadorDaVez = 0
+        jogadorDaVez = 0
+    } else {
+        observador.jogadorDaVez++
+        jogadorDaVez++
+    }
+}
+//FIM CONTROLE JOGADA MAQUINA

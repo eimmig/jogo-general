@@ -3,6 +3,11 @@ package br.utfpr.edu.jogogeneral.model;
 import java.io.Serializable;
 import java.util.Random;
 
+
+/*
+* classe dos dados, contem os lados e a funcao de roll
+*
+* */
 public class Dado implements Serializable {
     private int sideUp;
 

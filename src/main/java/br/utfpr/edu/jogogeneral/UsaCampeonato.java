@@ -6,6 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+
+
+/*
+* classe de inicializacao para rodar o projeto
+* */
 @SpringBootApplication
 public class UsaCampeonato {
 	public static void main(String[] args) {
@@ -16,6 +21,11 @@ public class UsaCampeonato {
 		menu();
 	}
 
+
+	/*
+	* funcao menu, ela abre o navegador default do sistema operacional do usuário
+	* já na pagina de execucao
+	* */
 	public static void  menu () {
 
 		String url = "http://localhost:8080/";

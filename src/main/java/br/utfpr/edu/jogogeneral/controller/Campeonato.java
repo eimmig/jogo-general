@@ -8,6 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+
+/*
+* Classe campeonato
+*  funciona como um segundo controlador
+*  nela temos os jogadores do campeonato e algumas funções
+* */
 public class Campeonato {
     private Jogador[] jogadores;
 
@@ -16,6 +22,11 @@ public class Campeonato {
     public Campeonato(int maxJogadores) {
         jogadores = new Jogador[maxJogadores];
         numJogadores = 0;
+    }
+
+    public Campeonato(int maxJogadores, Jogador[] jogadores) {
+        this.jogadores = jogadores;
+        this.numJogadores = maxJogadores;
     }
 
     public int getNumJogadores() {
@@ -34,28 +45,42 @@ public class Campeonato {
         this.jogadores = jogadores;
     }
 
-    public void incluirJogador(Jogador jogador) {
+    //funcao para incluir jogadores
+
+    public boolean incluirJogador(Jogador jogador) {
         if (numJogadores < jogadores.length) {
             jogadores[numJogadores] = jogador;
             numJogadores++;
+            return true;
         } else {
             System.out.println("Limite máximo de jogadores atingido.");
+            return false;
         }
     }
 
-    public void removerJogador(Jogador jogador) {
-        for (int i = 0; i < numJogadores; i++) {
-            if (jogadores[i].equals(jogador)) {
-                for (int j = i; j < numJogadores - 1; j++) {
-                    jogadores[j] = jogadores[j + 1];
-                }
-                numJogadores--;
-                return;
+
+    //funcao remover jogador
+    public void removerJogador(Long id) {
+        Jogador[] jogadores = this.getJogadores();
+
+        Jogador[] novoArray = new Jogador[jogadores.length - 1]; //crio um array com jogadores -1
+
+        int novoIndice = 0;
+
+        for (Jogador jogador : jogadores) {
+            if (jogador == null) {
+                break;
+            }
+
+            if (jogador.getId().longValue() != id) {
+                novoArray[novoIndice] = jogador;
+                novoIndice++;
             }
         }
-        System.out.println("Jogador não encontrado.");
+        this.setJogadores(novoArray);
     }
 
+    //funcao iniciar o campeonato
     public void iniciarCampeonato() throws Exception {
         try {
             gravarEmArquivo("campeonato.dat");
@@ -64,14 +89,7 @@ public class Campeonato {
         }
     }
 
-    public void mostrarCartela() {
-        for (int i = 0; i < numJogadores; i++) {
-            System.out.println("Cartela de " + jogadores[i].getNome() + ":");
-            jogadores[i].mostrarJogadasExecutadas();
-            System.out.println();
-        }
-    }
-
+    //gravar em arquivo
     public void gravarEmArquivo(String nomeArquivo) throws Exception {
         Path arquivoPath = Paths.get(nomeArquivo);
         try {
@@ -91,14 +109,18 @@ public class Campeonato {
         }
     }
 
-    public void lerDoArquivo(String nomeArquivo) {
+
+    //ler objetos do arquivo para a cartela
+    public Jogador[] lerDoArquivo(String nomeArquivo) {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
             Jogador[] jogadoresLidos = (Jogador[]) inputStream.readObject();
             numJogadores = jogadoresLidos.length;
             jogadores = Arrays.copyOf(jogadoresLidos, jogadoresLidos.length);
             System.out.println("Dados lidos do arquivo com sucesso.");
+            return jogadoresLidos;
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Erro ao ler do arquivo: " + e.getMessage());
+            return new Jogador[0];
         }
     }
 }

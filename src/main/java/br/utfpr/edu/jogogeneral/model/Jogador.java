@@ -4,6 +4,13 @@ import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
 
 import java.io.Serializable;
 
+
+
+/*
+* classe jogador, compreende todas as funcionalidades e metodos do jogador
+*
+*
+* */
 public class Jogador implements Serializable {
     private String nome;
     private String tipoJogador;
@@ -68,5 +75,28 @@ public class Jogador implements Serializable {
     @Override
     public String toString() {
         return "Jogador: " + nome + "\nTipo de Jogador: " + tipoJogador + "\nid: "  + id + "\n" + jogoG;
+    }
+
+
+    //metodo de jogadas restantes utilizado para jogada da maquina
+    public int[] mostrarJogadasRestantes() {
+        return removerValoresDiferentesDeZero(jogoG.getJogadas());
+    }
+
+    //metodo de para remover as jogadas ja usadas da maquina
+    public static int[] removerValoresDiferentesDeZero(int[] array) {
+        int count = 0;
+
+        for (int valor : array) {
+            if (valor != 0) {
+                count++;
+            }
+        }
+        int[] novoArray = new int[12-count];
+
+        for (int i = 0; i < novoArray.length; i++) {
+                novoArray[i] = i;
+        }
+        return novoArray;
     }
 }
