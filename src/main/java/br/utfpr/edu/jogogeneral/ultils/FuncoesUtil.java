@@ -2,7 +2,7 @@ package br.utfpr.edu.jogogeneral.ultils;
 
 //classe de funções uteis que são usadas em metodos como validacao e pontuacao
 
-public class funcoesUtil {
+public class FuncoesUtil {
     public static int contarNumeros(int[] numeros, int numero) {
         int count = 0;
         for (int num : numeros) {

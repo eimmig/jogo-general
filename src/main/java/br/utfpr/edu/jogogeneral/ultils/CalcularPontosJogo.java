@@ -1,8 +1,8 @@
 package br.utfpr.edu.jogogeneral.ultils;
 
-//como tem funções em comum com a de validação resolvi herdar da classe funcoesUtil
+//como tem funções em comum com a de validação resolvi herdar da classe FuncoesUtil
 
-public class CalcularPontosJogo extends funcoesUtil {
+public class CalcularPontosJogo extends FuncoesUtil {
 
     //switch case na opção onde já retorna o valor em pontos da jogada
     public static int calcularPontos(int[] numeros, int opcao) {

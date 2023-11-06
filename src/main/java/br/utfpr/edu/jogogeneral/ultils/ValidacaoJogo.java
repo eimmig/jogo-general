@@ -2,9 +2,9 @@ package br.utfpr.edu.jogogeneral.ultils;
 
 import java.util.Arrays;
 
-//como tem funções em comum com a de potuacao resolvi extender da classe funcoesUtil
+//como tem funções em comum com a de potuacao resolvi extender da classe FuncoesUtil
 
-public class ValidacaoJogo extends funcoesUtil {
+public class ValidacaoJogo extends FuncoesUtil {
 
     /*a função seguinte é a principal do método, ela quem vai controlar se é uma jogada valida ou nao
     * as demais funções são apenas funções de validação de jogadas onde elas retornam para
