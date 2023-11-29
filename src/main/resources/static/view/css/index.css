@@ -40,3 +40,37 @@ h1 {
     background-color: #ff6600;
     transform: scale(1.1);
 }
+
+.line {
+    border-right: 2px solid rgba(0, 0, 0, 0.952);
+    color: rgba(226, 98, 24, 0.75);
+    font-family: "Special Elite", monospace;
+    font-size: 3em;
+    text-align: center;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .typing-animation {
+    animation: blinkCursor 500ms steps(40) infinite normal,
+      typing 3s steps(40) 1s normal both;
+  }
+
+  @keyframes typing {
+    from {
+      width: 0;
+    }
+    to {
+      width: 11em;
+    }
+  }
+
+  @keyframes blinkCursor {
+    from {
+      border-right-color: rgba(0, 0, 0, 0.877)
+    }
+    to {
+      border-right-color: transparent;
+    }
+  }
