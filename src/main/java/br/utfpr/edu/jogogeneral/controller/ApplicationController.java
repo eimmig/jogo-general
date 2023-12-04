@@ -75,13 +75,10 @@ public class ApplicationController {
         boolean incluiu = this.campeonato.incluirJogador(jogador);
 
         if (!incluiu) {
-            jogador = null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao incluir jogador");
         }
-
-        JogadorDTO responseObject = new JogadorDTO(jogador, (incluiu ? "Jogador incluído com sucesso" : "Limite de jogadores já atingido"));
-        return ResponseEntity.ok(responseObject);
+        return ResponseEntity.ok(new JogadorDTO<>(jogador, "Jogador incluído com sucesso"));
     }
-
 
     //endpoint remover jogador
     @DeleteMapping("/remover/{id}")
@@ -107,42 +104,49 @@ public class ApplicationController {
     }
 
 
-//    //endpoint jogada manual
-//    @PostMapping(value = "/executarJogada", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<String> executarJogada(@RequestBody JogadaDTO jogada) {
-//        Jogador[] jogadores = this.campeonato.getJogadores();
-//        try {
-//            for (Jogador jogador : jogadores) {
-//                if (Objects.equals(jogador.getId(), jogada.getJogador())) {
-//                    jogador.escolherJogada(jogada);
-//                    this.campeonato.gravarEmArquivo("campeonato.dat");
-//                    return ResponseEntity.ok("Jogada Realizada com sucesso!");
-//                }
-//            }
-//            return ResponseEntity.badRequest().body("Erro ao realizar jogada: Jogador não encontrado");
-//        }catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Erro ao realizar jogada: " + e);
-//        }
-//    }
-//
-//
-//    //botão de mostrar jogadas do jogador
-//    @GetMapping("/mostrarJogadas/{id}")
-//    public ResponseEntity<int[]> MostrarJogadas(@PathVariable Integer id) {
-//        Jogador[] jogadores = this.campeonato.getJogadores();
-//
-//        int[] jogadas = {0,0,0,0,0,0,0,0,0,0};
-//
-//        for (Jogador jogador : jogadores) {
-//            if (Objects.equals(jogador.getId(), id)) {
-//                //chama o jogarDados para o jogador passado
-//                jogadas = jogador.mostrarJogadasExecutadas();
-//
-//                return new ResponseEntity<>(jogadas, HttpStatus.OK);
-//            }
-//        }
-//        return new ResponseEntity<>(jogadas, HttpStatus.OK);
-//    }
+    //endpoint jogada manual
+    @PostMapping(value = "/executarJogada", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> executarJogada(@RequestBody JogadaDTO jogada) {
+        Jogador[] jogadores = this.campeonato.getJogadores();
+        try {
+            for (Jogador jogador : jogadores) {
+                if (Objects.equals(jogador.getId(), jogada.getJogador())) {
+                    if (jogador instanceof Humano) {
+                        this.campeonato.realizarJogada(jogador, jogada);
+                    } else {
+                        throw new Exception("Jogador do tipo máquina.");
+                    }
+                    this.campeonato.gravarEmArquivo("campeonato.dat");
+                    return ResponseEntity.ok("Jogada Realizada com sucesso!");
+                }
+            }
+            return ResponseEntity.badRequest().body("Erro ao realizar jogada: Jogador não encontrado");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao realizar jogada: " + e);
+        }
+    }
+
+
+    //botão de mostrar jogadas do jogador
+    @GetMapping("/mostrarJogadas/{id}")
+    public ResponseEntity<?> MostrarJogadas(@PathVariable Integer id) {
+        Jogador[] jogadores = this.campeonato.getJogadores();
+
+        int[] jogadas;
+
+        for (Jogador jogador : jogadores) {
+            if (Objects.equals(jogador.getId(), id)) {
+                if (jogador instanceof Humano) {
+                    //chama o jogarDados para o jogador passado
+                    jogadas = this.campeonato.mostrarJogadas(jogador);
+                } else {
+                    return new ResponseEntity<>("Jogador do tipo máquina.", HttpStatus.BAD_REQUEST);
+                }
+                return new ResponseEntity<>(jogadas, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("Jogador não encontrado com o ID: " + id, HttpStatus.BAD_REQUEST);
+    }
 //
 //
 //    //cartela final de resultados

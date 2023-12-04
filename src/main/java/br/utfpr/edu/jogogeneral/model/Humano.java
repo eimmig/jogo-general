@@ -1,5 +1,7 @@
 package br.utfpr.edu.jogogeneral.model;
 
+import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
+
 public class Humano extends Jogador implements  JogarComoHumano{
 
     private  String cpf;
@@ -22,7 +24,7 @@ public class Humano extends Jogador implements  JogarComoHumano{
     }
 
     @Override
-    public int estcolherJogada(JogoGeneral jogo) {
-        return 0;
+    public void escolherJogada(JogadaDTO jogada, JogoGeneral jogo) {
+        jogo.pontuarJogada(jogada);
     }
 }

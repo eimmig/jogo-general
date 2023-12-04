@@ -89,4 +89,8 @@ public abstract class Jogador implements Serializable {
         JogoDados jogo = this.jogos[indexJogo-1];
        return jogo.rolarDados();
     }
+
+    public int[] mostrarJogadasExecutadas(JogoGeneral jogo) {
+        return jogo.getJogadas();
+    }
 }

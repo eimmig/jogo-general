@@ -1,10 +1,8 @@
 package br.utfpr.edu.jogogeneral.controller;
 
-import br.utfpr.edu.jogogeneral.model.Jogador;
-import br.utfpr.edu.jogogeneral.model.JogoAzar;
-import br.utfpr.edu.jogogeneral.model.JogoDados;
-import br.utfpr.edu.jogogeneral.model.JogoGeneral;
+import br.utfpr.edu.jogogeneral.model.*;
 import br.utfpr.edu.jogogeneral.ultils.CarregarInformacoesDTO;
+import br.utfpr.edu.jogogeneral.ultils.JogadaDTO;
 import br.utfpr.edu.jogogeneral.ultils.JogadorDTO;
 
 import java.io.*;
@@ -25,7 +23,7 @@ public class Campeonato {
     private int numJogadores;
 
     //controle de jogador na vez
-    private static int jogadorDaVez = -1;
+    private static int jogadorDaVez = 0;
 
     public Campeonato(int maxJogadores) {
         jogadores = new Jogador[maxJogadores];
@@ -88,7 +86,7 @@ public class Campeonato {
             }
         }
         this.setJogadores(novoArray);
-        if (this.jogadores[1] != null) {
+        if (this.jogadores[0] != null) {
             this.numJogadores = novoArray.length;
 
         } else {
@@ -193,4 +191,29 @@ public class Campeonato {
         }
     }
 
+    public void realizarJogada(Jogador jogador, JogadaDTO jogada) {
+
+        JogoDados[] jogos = jogador.getJogos();
+        JogoGeneral ultimoJogoNaoNulo = null;
+        for (int i = jogos.length - 1; i >= 0; i--) {
+            if (jogos[i] != null) {
+                ultimoJogoNaoNulo = (JogoGeneral) jogos[i];
+                break;
+            }
+        }
+        //a logica acima praticamente via pegar o ultimo registro que não é nulo. Esse pode ser validado da maneira que será sempre do jogo que esta sendo jogado agora
+        ((Humano) jogador).escolherJogada(jogada, ultimoJogoNaoNulo);
+    }
+
+    public int[] mostrarJogadas(Jogador jogador) {
+        JogoDados[] jogos = jogador.getJogos();
+        JogoGeneral ultimoJogoNaoNulo = null;
+        for (int i = jogos.length - 1; i >= 0; i--) {
+            if (jogos[i] != null) {
+                ultimoJogoNaoNulo = (JogoGeneral) jogos[i];
+                break;
+            }
+        }
+        return jogador.mostrarJogadasExecutadas(ultimoJogoNaoNulo);
+    }
 }
