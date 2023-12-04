@@ -7,17 +7,13 @@ import br.utfpr.edu.jogogeneral.ultils.ValidacaoJogo;
 
 import java.io.Serializable;
 
-public class JogoGeneral implements Serializable {
-    private Dado[] dados;
+public class JogoGeneral extends JogoDados implements Serializable {
     private int[] jogadas;
 
     private Campeonato campeonato;
 
     public JogoGeneral() {
-        dados = new Dado[5];
-        for (int i = 0; i < 5; i++) {
-            dados[i] = new Dado();
-        }
+        super(5, "Jogo General", 100F);
 
         jogadas = new int[13];
     }
@@ -50,7 +46,7 @@ public class JogoGeneral implements Serializable {
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("Valores dos Dados: ");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < nDados; i++) {
             result.append(dados[i].getSideUp()).append(" ");
         }
         result.append("\n");
@@ -61,11 +57,11 @@ public class JogoGeneral implements Serializable {
         return result.toString();
     }
 
+    @Override
     public Dado[] rolarDados() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < nDados; i++) {
             dados[i].roll();
         }
-
         return dados;
     }
 
@@ -108,5 +104,10 @@ public class JogoGeneral implements Serializable {
             }
         }
         return melhorOpcao;
+    }
+
+    @Override
+    public int[] somarFacesSorteadas(Dado[] dados) {
+        return new int[0];
     }
 }

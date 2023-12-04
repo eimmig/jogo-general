@@ -1,6 +1,11 @@
 package br.utfpr.edu.jogogeneral.controller;
 
 import br.utfpr.edu.jogogeneral.model.Jogador;
+import br.utfpr.edu.jogogeneral.model.JogoAzar;
+import br.utfpr.edu.jogogeneral.model.JogoDados;
+import br.utfpr.edu.jogogeneral.model.JogoGeneral;
+import br.utfpr.edu.jogogeneral.ultils.CarregarInformacoesDTO;
+import br.utfpr.edu.jogogeneral.ultils.JogadorDTO;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,6 +23,9 @@ public class Campeonato {
     private Jogador[] jogadores;
 
     private int numJogadores;
+
+    //controle de jogador na vez
+    private static int jogadorDaVez = -1;
 
     public Campeonato(int maxJogadores) {
         jogadores = new Jogador[maxJogadores];
@@ -63,7 +71,7 @@ public class Campeonato {
     public void removerJogador(Long id) {
         Jogador[] jogadores = this.getJogadores();
 
-        Jogador[] novoArray = new Jogador[jogadores.length - 1]; //crio um array com jogadores -1
+        Jogador[] novoArray = new Jogador[jogadores.length]; //crio um array com jogadores
 
         int novoIndice = 0;
 
@@ -75,9 +83,17 @@ public class Campeonato {
             if (jogador.getId().longValue() != id) {
                 novoArray[novoIndice] = jogador;
                 novoIndice++;
+            } else {
+                novoArray[novoIndice] = null;
             }
         }
         this.setJogadores(novoArray);
+        if (this.jogadores[1] != null) {
+            this.numJogadores = novoArray.length;
+
+        } else {
+            this.numJogadores = 0;
+        }
     }
 
     //funcao iniciar o campeonato
@@ -123,4 +139,58 @@ public class Campeonato {
             return new Jogador[0];
         }
     }
+    public CarregarInformacoesDTO carregarInformacoes() {
+        if (jogadorDaVez == -1) {
+            jogadorDaVez = 0;
+        }
+
+
+        JogadorDTO[] jogadoresDTO = new JogadorDTO[this.numJogadores];
+        for (int i = 0; i < numJogadores; i++) {
+            jogadoresDTO[i] = new JogadorDTO(this.jogadores[i], "ok");
+        }
+
+        CarregarInformacoesDTO informacoes = new CarregarInformacoesDTO(jogadorDaVez, jogadoresDTO);
+
+        if (jogadorDaVez + 1 > numJogadores-1) {
+            jogadorDaVez = 0;
+        } else {
+            jogadorDaVez++;
+        }
+
+        return informacoes;
+    }
+
+    public void setJogoEscolhido(String jogoEscolhido) {
+        JogoDados novoJogo;
+        if (jogoEscolhido.equals("Azar")) {
+            novoJogo = new JogoAzar();
+        } else {
+            novoJogo = new JogoGeneral();
+        }
+        // Verifica se o array jogos já foi inicializado
+        JogoDados[] jogos = this.jogadores[jogadorDaVez].getJogos();
+        if (jogos == null) {
+            // Se não foi inicializado, crie um novo array com tamanho 1
+            this.jogadores[jogadorDaVez].setJogos(new JogoDados[]{novoJogo});
+        } else {
+            // Se o array já foi inicializado, verifique se tem comprimento maior que zero
+            if (jogos.length > 0) {
+                // Se tiver comprimento maior que zero, crie um novo array com tamanho aumentado em 1
+                JogoDados[] novoArray = new JogoDados[jogos.length + 1];
+
+                // Copie os jogos existentes para o novo array
+                System.arraycopy(jogos, 0, novoArray, 0, jogos.length);
+
+                novoArray[jogos.length] = novoJogo;
+
+                // Atualiza a referência para o novo array
+                this.jogadores[jogadorDaVez].setJogos(novoArray);
+            } else {
+                // Se o array tem comprimento zero, crie um novo array com tamanho 1
+                this.jogadores[jogadorDaVez].setJogos(new JogoDados[]{novoJogo});
+            }
+        }
+    }
+
 }

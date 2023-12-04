@@ -24,7 +24,7 @@ public class JogadorDTO<T> {
     public JogadorDTO(Jogador jogador, String message) {
         this.id = jogador.getId();
         this.nome = jogador.getNome();
-        this.tipo = jogador.getTipoJogador();
+        this.tipo = jogador.getTipo();
         this.message = message;
     }
 }

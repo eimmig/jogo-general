@@ -2,23 +2,133 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PO24CP</title>
+    <title>Início</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="view/css/index.css">
+    <link rel="stylesheet" href="view/css/CadstroJogadores.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body>
-    <div id="botoes">
-        <p class="line typing-animation">Escolha seu Jogo!</p>
-        <a href="pagina1.html"><button class="botao">Jogo de Azar</button></a>
-        <a href="jogoGeneral.html"><button class="botao">Jogo General</button></a>
+<div class="top-logo"></div>
+<div class="button-container">
+    <div class="button-column-left">
+        <div id="openModal" class="button"><i class="fa-solid fa-address-card" style="color: #000000;"></i> Incluir jogador</div>
+        <div id="openRemovePlayerModal" class="button"><i class="fa-solid fa-user-slash" style="color: #000000;"></i> Remover jogador</div>
+        <div class="button hidden" id="roll-button"><i class="fa-solid fa-dice" style="color: #000000;"></i> Executar rodada</div>
+        <div class="button" id="start-button"><i class="fa-solid fa-play" style="color: #000000;"></i> Iniciar Campeonato</div>
+        <div class="button hidden" id="mostrarTabela"><i class="fa-solid fa-table-list" style="color: #000000;"></i> Cartela de resultados</div>
     </div>
-    <script src="index.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <div class="button-column-right">
+        <div id="fecharAplicacao" class="button last-button"><i class="fa-solid fa-door-open" style="color: #000000;"></i> Sair da aplicação</div>
+    </div>
+</div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title">
+            <i class="fa-solid fa-user-plus" style="color: #000000;"></i> Cadastro
+        </div>
+        <input id="nome-jogador" class="modal-input-cadastrar" type="text" placeholder="Nome">
+        <input id="cpf-jogador" class="modal-input-cadastrar hidden" type="text" placeholder="CPF">
+        <input id="agencia-jogador" class="modal-input-cadastrar hidden" type="text" placeholder="Agencia">
+        <input id="conta-jogador" class="modal-input-cadastrar hidden" type="text" placeholder="Conta">
+        <input id="numero-jogador" class="modal-input-cadastrar hidden" type="text" placeholder="Número Banco">
+        <select class="modal-input" id="tipo-jogador">
+            <option value="M">Máquina</option>
+            <option value="H">Humano</option>
+        </select>
+        <div class="modal-buttons">
+            <button class="modal-button modal-button-cancel">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button class="modal-button modal-button-confirm">
+                <i class="fas fa-check"></i> Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+<div id="removePlayerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title">
+            <i class="fa-solid fa-user-slash" style="color: #000000;"></i> Remover Jogador
+        </div>
+        <select class="modal-input" id="playerSelect">
+            <!-- Opções de jogadores são adicionadas pelo javascript -->
+        </select>
+        <div class="modal-buttons">
+            <button class="modal-button modal-button-cancel-remove">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button class="modal-button modal-button-confirm-remove">
+                <i class="fas fa-trash"></i> Remover
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="tabelaContainer" class="transition-fade-out" style="display:none; width: 70%; margin-top:-15%;">
+    <div id="tabelaCabecalho" style="overflow: hidden; color:black">
+        <table style="max-width:100%;">
+            <thead>
+            <tr>
+                <th class="col-lg-1"><b>#</b></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="tabelaCorpo" style="overflow-y: auto; max-height: calc(70% - 40px);">
+        <table class="table table-bordered" style="max-width:100%;">
+            <tbody id="table-body">
+            <tr class="tr" id="tr-0">
+                <td class="col-lg-1"><b>1</b></td>
+            </tr>
+            <tr class="tr" id="tr-1">
+                <td class="col-lg-1"><b>2</b></td>
+            </tr>
+            <tr class="tr" id="tr-2">
+                <td class="col-lg-1"><b>3</b></td>
+            </tr>
+            <tr class="tr" id="tr-3">
+                <td class="col-lg-1"><b>4</b></td>
+            </tr>
+            <tr class="tr" id="tr-4">
+                <td class="col-lg-1"><b>5</b></td>
+            </tr>
+            <tr class="tr" id="tr-5">
+                <td class="col-lg-1"><b>6</b></td>
+            </tr>
+            <tr class="tr" id="tr-6">
+                <td class="col-lg-1"><b>T</b></td>
+            </tr>
+            <tr class="tr" id="tr-7">
+                <td class="col-lg-1"><b>Q</b></td>
+            </tr>
+            <tr class="tr" id="tr-8">
+                <td class="col-lg-1"><b>F</b></td>
+            </tr>
+            <tr class="tr" id="tr-9">
+                <td class="col-lg-1"><b>S+</b></td>
+            </tr>
+            <tr class="tr" id="tr-10">
+                <td class="col-lg-1"><b>S-</b></td>
+            </tr>
+            <tr class="tr" id="tr-11">
+                <td class="col-lg-1"><b>G</b></td>
+            </tr>
+            <tr class="tr" id="tr-12">
+                <td class="col-lg-1"><b>X</b></td>
+            </tr>
+            <tr class="tr" id="tr-13">
+                <td class="col-lg-1"><b>Total</b></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="cadastroJogadores.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>

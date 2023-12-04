@@ -1,17 +1,5 @@
 const cubes = document.querySelectorAll('.cube');
 const rollButton = document.getElementById('roll-button');
-const startButton = document.getElementById('start-button');
-const mostrarTabela = document.getElementById('mostrarTabela');
-const tabelaContainer = document.getElementById('tabelaContainer');
-const modal = document.getElementById('modal');
-const openModal = document.getElementById('openModal');
-const removePlayerModal = document.getElementById('removePlayerModal');
-const openRemovePlayerModal = document.getElementById('openRemovePlayerModal');
-const playerSelect = document.getElementById('playerSelect');
-const cancelButton = document.querySelector('.modal-button-cancel');
-const confirmButton = document.querySelector('.modal-button-confirm');
-const confirmButtonRemove = document.querySelector('.modal-button-confirm-remove');
-const cancelButtonRemove = document.querySelector('.modal-button-cancel-remove');
 const table = document.querySelector('table');
 const containerEscolhas = document.querySelector('.container-escolhas');
 const escolhaNumero1 = document.querySelector('#escolha-numero-1');
@@ -43,28 +31,6 @@ let jogadorDaVez = -1;
 
 //controle de fim do jogo
 let maxRodadas = 0;
-
-//INICIAR CAMPEONATO
-startButton.addEventListener('click', () => {
-
-    if (players.length < 1) {
-        toastr.error("Inclua os Jogadores Primeiro!")
-        return
-    }
-
-    axios.post('/controller/iniciarCampeonato')
-        .then (response => {
-            rollButton.classList.remove('hidden')
-            startButton.classList.add('hidden')
-            toastr.success(response.data)
-            jogadorDaVez++;
-            observador.jogadorDaVez = 0;
-        })
-        .catch(error => {
-            console.error('Erro ao fazer a solicitação POST:', error)
-        });
-})
-//FIM INICIAR CAMPEONATO
 
 //DADOS
 let rolling = false;
@@ -137,8 +103,6 @@ rollButton.addEventListener('click', () => {
 
                                     if (maxRodadas+1 / players.length > 13) {
                                         rollButton.classList.add('hidden')
-                                        mostrarTabela.classList.remove('hidden')
-                                        toastr.success("O jogo foi finalizado, por favor veja a tabela de resultados")
                                     } else {
                                         maxRodadas++;
                                     }
@@ -170,7 +134,7 @@ function addColumnToHeader(newColumnHeader) {
 function addRowsToTable(jogada) {
     let soma = 0
     for (let i = 0; i <= 13; i++) {
-        const newRow = document.getElementById("tr-"+i);
+        const newRow = document.getElementById("tr-" + i);
         const newCell = document.createElement('td');
         if (i === 13) {
             newCell.innerHTML = soma
@@ -182,145 +146,6 @@ function addRowsToTable(jogada) {
         newRow.appendChild(newCell);
     }
 }
-mostrarTabela.addEventListener('click', async () => {
-    if (tabelaContainer.classList.contains('transition-fade-out')) {
-        topLogo.classList.add('hidden')
-
-        if (!mostrouTabela) {
-            await axios.get('/controller/mostrarCartelaFinal/')
-                .then(response => {
-                    console.log(response)
-                    let jogadas = response.data.jogadas
-                    jogadas.forEach(jogada => {
-                        if (jogada) {
-                            addRowsToTable(jogada)
-                            mostrouTabela = true
-                        }
-                    })
-                })
-                .catch(error => {
-                    console.log(error)
-                });
-            }
-        tabelaContainer.classList.remove('transition-fade-out');
-        tabelaContainer.style.display = 'block';
-        mostrarTabela.innerHTML = '<i class="fa-solid fa-eye-slash" style="color: #000000;"></i> Ocultar cartela de resultados';
-    } else {
-        topLogo.classList.remove('hidden')
-        tabelaContainer.classList.add('transition-fade-out');
-        mostrarTabela.innerHTML = '<i class="fa-solid fa-table-list" style="color: #000000;"></i> Cartela de resultados';
-    }
-});
-//FIM CARTELA RESULTADOS
-
-//MODAL ADICIONAR PLAYERS
-openModal.addEventListener('click', () => {
-    modal.style.display = 'block';
-});
-
-cancelButton.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    }
-});
-
-confirmButton.addEventListener('click', () => {
-    const data = {
-        nome: $('#nome-jogador').val(),
-        tipo: $('#tipo-jogador').val()
-    };
-    axios.post('controller/incluirJogador', data)
-        .then(response => {
-            if (response.data.id != -1) {
-                let jogadorCriado = {
-                    id: response.data.id,
-                    nome: response.data.nome,
-                    tipo: response.data.tipo,
-                };
-                players.push(jogadorCriado);
-                //adiciona o player na lista pra remover
-                const option = document.createElement('option');
-                option.value = jogadorCriado.id;
-                option.textContent = jogadorCriado.nome;
-                playerSelect.appendChild(option);
-                //adiciona ao cabeçalho da tabela de resultado
-                addColumnToHeader(response.data.nome)
-                //mostra o toastr de sucesso
-                toastr.success(response.data.message);
-                modal.style.display = 'none';
-            } else {
-                toastr.error(response.data.message)
-            }
-        })
-        .catch(error => {
-            toastr.error(error.data);
-            modal.style.display = 'none';
-        });
-});
-//FIM MODAL ADICIONAR PLAYERS
-
-//MODAL REMOVER PLAYERS
-players.forEach(player => {
-    const option = document.createElement('option');
-    option.value = player.id;
-    option.textContent = player.nome;
-    playerSelect.appendChild(option);
-});
-
-openRemovePlayerModal.addEventListener('click', () => {
-    removePlayerModal.style.display = 'block';
-});
-
-cancelButtonRemove.addEventListener('click', () => {
-    removePlayerModal.style.display = 'none';
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target === removePlayerModal) {
-        removePlayerModal.style.display = 'none';
-    }
-});
-
-confirmButtonRemove.addEventListener('click', () => {
-    const idJogador = $('#playerSelect').val();
-    axios.delete(`/controller/remover/${idJogador}`)
-        .then((response) => {
-            this.removerOpcaoPorId(idJogador);
-            toastr.success(response.data);
-        })
-        .catch((error) => {
-            console.error('Erro ao excluir:', error);
-        });
-});
-
-function removerOpcaoPorId(id) {
-    const playerSelect = document.getElementById('playerSelect'); // Obtenha o elemento select
-
-    for (let i = 0; i < playerSelect.options.length; i++) {
-        if (playerSelect.options[i].value === id.toString()) {
-            playerSelect.remove(i); // Remove a opção com o valor correspondente ao ID
-            break;
-        }
-    }
-}
-//FIM MODAL REMOVER PLAYERS
-
-//SAIR DA APLICAÇÃO
-document.getElementById('fecharAplicacao').addEventListener('click', () => {
-    axios.post('/controller/exit')
-        .then(response => {
-            console.log(response.data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    toastr.success("A aplicação será finalizada em alguns segundos!");
-});
-//FIM SAIR DA APLICAÇÃO
 
 //FAZER JOGADA
 escolhaNumero1.addEventListener('click', () => {
@@ -375,14 +200,6 @@ function fazerJogada (opcao) {
         .catch(error => {
             console.error(error);
         });
-
-    if (jogadorDaVez+1 > players.length-1) {
-        observador.jogadorDaVez = 0
-        jogadorDaVez = 0
-    } else {
-        observador.jogadorDaVez++
-        jogadorDaVez++
-    }
 }
 //FIM FAZER JOGADA
 
@@ -416,14 +233,13 @@ document.getElementById("closeModalBtn").addEventListener("click", function() {
     document.getElementById("modal-escolhas").style.display = "none";
 });
 //FIM MOSTRAR JOGADAS EXECUTADAS
+
 //CONTROLE JOGADA MAQUINA
 const observador = new Proxy({}, {
     set: async function(target, key, value) {
         if (key === "jogadorDaVez") {
             if ((maxRodadas+1 / players.length > 13)) {
                 rollButton.classList.add('hidden')
-                mostrarTabela.classList.remove('hidden')
-                toastr.success("O jogo foi finalizado, por favor veja a tabela de resultados")
                 return
             }
             if (players[value].tipo === "M") {
@@ -453,20 +269,48 @@ async function jogadaMaquina() {
         .catch(error => {
             console.error(error);
         });
-
-    if (jogadorDaVez+1 > players.length-1) {
-        observador.jogadorDaVez = 0
-        jogadorDaVez = 0
-    } else {
-        observador.jogadorDaVez++
-        jogadorDaVez++
-    }
 }
 //FIM CONTROLE JOGADA MAQUINA
 
 
 //VOLTAR
-
 voltarBotao.addEventListener('click', () => {
     window.location.href = "index.html";
 })
+
+//FIM VOLTAR
+
+
+//INICIO CARREGAR INFORMAÇÕES
+document.addEventListener("DOMContentLoaded", async function() {
+
+    await axios.post('/controller/jogoEscolhido', {"jogoEscolhido" : "General"})
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+
+
+    axios.get('/controller/carregarInformacoes')
+        .then(function(response) {
+            debugger;
+            let jogadores = response.data.jogadores;
+
+            let jogadoresTransformados = jogadores.map(jogador => ({
+                id: jogador.id,
+                nome: jogador.nome,
+                tipo: jogador.tipo,
+            }));
+
+            players.push(...jogadoresTransformados);
+            jogadorDaVez = response.data.jogadorDaVez;
+        })
+        .catch(function(error) {
+            // Tratar erros
+            console.error('Erro na requisição:', error);
+        });
+});
+//FIM CARREGAR INFORMAÇÕES

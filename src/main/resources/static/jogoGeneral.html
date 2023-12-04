@@ -15,12 +15,7 @@
     <div class="top-logo"></div>
     <div class="button-container">
         <div class="button-column-left">
-            <div id="openModal" class="button"><i class="fa-solid fa-address-card" style="color: #000000;"></i> Incluir jogador</div>
-            <div id="openRemovePlayerModal" class="button"><i class="fa-solid fa-user-slash" style="color: #000000;"></i> Remover jogador</div>
-            <div class="button hidden" id="roll-button"><i class="fa-solid fa-dice" style="color: #000000;"></i> Executar rodada</div>
-            <div class="button" id="start-button"><i class="fa-solid fa-play" style="color: #000000;"></i> Iniciar Campeonato</div>
-            <div class="button hidden" id="mostrarTabela"><i class="fa-solid fa-table-list" style="color: #000000;"></i> Cartela de resultados</div>
-            <div class="button" href="index.html" id="voltarAplicacao"><i class="fa-regular fa-hand-point-left" style="color: #000000;"></i> Voltar</div>
+            <div class="button" id="roll-button"><i class="fa-solid fa-dice" style="color: #000000;"></i> Executar rodada</div>
         </div>
         <div class="scene">
             <div class="cube">
@@ -65,45 +60,7 @@
             </div>
         </div>
         <div class="button-column-right">
-            <div id="fecharAplicacao" class="button last-button"><i class="fa-solid fa-door-open" style="color: #000000;"></i> Sair da aplicação</div>
-        </div>
-    </div>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">
-                <i class="fa-solid fa-user-plus" style="color: #000000;"></i> Cadastro
-            </div>
-            <input id="nome-jogador" class="modal-input-cadastrar" type="text" placeholder="Nome">
-            <select class="modal-input" id="tipo-jogador">
-                <option value="M">Máquina</option>
-                <option value="H">Humano</option>
-            </select>
-            <div class="modal-buttons">
-                <button class="modal-button modal-button-cancel">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button class="modal-button modal-button-confirm">
-                    <i class="fas fa-check"></i> Confirmar
-                </button>
-            </div>
-        </div>
-    </div>
-    <div id="removePlayerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">
-                <i class="fa-solid fa-user-slash" style="color: #000000;"></i> Remover Jogador
-            </div>
-            <select class="modal-input" id="playerSelect">
-              <!-- Opções de jogadores são adicionadas pelo javascript -->
-            </select>
-            <div class="modal-buttons">
-                <button class="modal-button modal-button-cancel-remove">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button class="modal-button modal-button-confirm-remove">
-                    <i class="fas fa-trash"></i> Remover
-                </button>
-            </div>
+            <div class="button" href="index.html" id="voltarAplicacao"><i class="fa-regular fa-hand-point-left" style="color: #000000;"></i> Voltar</div>
         </div>
     </div>
     <div class="modal" id="modal-escolhas">
@@ -169,65 +126,6 @@
                 </div>
             </form>
         </div>
-    </div>
-    <div id="tabelaContainer" class="transition-fade-out" style="display:none; width: 70%; margin-top:-15%;">
-            <div id="tabelaCabecalho" style="overflow: hidden; color:black">
-                <table style="max-width:100%;">
-                    <thead>
-                    <tr>
-                        <th class="col-lg-1"><b>#</b></th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-            <div id="tabelaCorpo" style="overflow-y: auto; max-height: calc(70% - 40px);">
-                <table class="table table-bordered" style="max-width:100%;">
-                    <tbody id="table-body">
-                    <tr class="tr" id="tr-0">
-                        <td class="col-lg-1"><b>1</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-1">
-                        <td class="col-lg-1"><b>2</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-2">
-                        <td class="col-lg-1"><b>3</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-3">
-                        <td class="col-lg-1"><b>4</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-4">
-                        <td class="col-lg-1"><b>5</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-5">
-                        <td class="col-lg-1"><b>6</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-6">
-                        <td class="col-lg-1"><b>T</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-7">
-                        <td class="col-lg-1"><b>Q</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-8">
-                        <td class="col-lg-1"><b>F</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-9">
-                        <td class="col-lg-1"><b>S+</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-10">
-                        <td class="col-lg-1"><b>S-</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-11">
-                        <td class="col-lg-1"><b>G</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-12">
-                        <td class="col-lg-1"><b>X</b></td>
-                    </tr>
-                    <tr class="tr" id="tr-13">
-                        <td class="col-lg-1"><b>Total</b></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
     </div>
     <div class="container-escolhas hidden">
         <div class="button hidden" id="mostrar-jogadas-executadas"><i class="fa-regular fa-eye" style="color: #000000;"></i></i>Jogadas Executadas</div>

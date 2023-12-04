@@ -11,37 +11,25 @@ import java.io.Serializable;
 *
 *
 * */
-public class Jogador implements Serializable {
+public abstract class Jogador implements Serializable {
     private String nome;
-    private String tipoJogador;
-    private JogoGeneral jogoG;
-
+    private String tipo;
+    private JogoDados[] jogos;
     private final Integer id;
 
-    public Jogador(String nome, String tipoJogador, JogoGeneral jogoG, int id) {
+    private static int lastId = 0;
+
+
+    public Jogador(String nome, String tipo) {
         this.nome = nome;
-        this.tipoJogador = tipoJogador;
-        this.jogoG = jogoG;
-        this.id = id;
+        this.tipo = tipo;
+        this.id = lastId++;
     }
 
-    public Jogador(JogoGeneral jogoG, int id) {
+    public Jogador(int id) {
         this.nome = "";
-        this.tipoJogador = "";
-        this.jogoG = jogoG;
-        this.id = id;
-    }
-
-    public Dado[] jogarDados() {
-        return jogoG.rolarDados();
-    }
-
-    public void escolherJogada(JogadaDTO jogada) {
-        jogoG.pontuarJogada(jogada);
-    }
-
-    public int[] mostrarJogadasExecutadas() {
-        return jogoG.getJogadas();
+        this.tipo = "M";
+        this.id = lastId++;
     }
 
     public String getNome() {
@@ -52,36 +40,30 @@ public class Jogador implements Serializable {
         this.nome = nome;
     }
 
-    public String getTipoJogador() {
-        return tipoJogador;
+    public JogoDados[] getJogos() {
+        return jogos;
     }
 
-    public void setTipoJogador(String tipoJogador) {
-        this.tipoJogador = tipoJogador;
-    }
-
-    public JogoGeneral getJogoG() {
-        return jogoG;
-    }
-
-    public void setJogoG(JogoGeneral jogoG) {
-        this.jogoG = jogoG;
+    public void setJogos(JogoDados[] jogos) {
+        this.jogos = jogos;
     }
 
     public Integer getId() {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "Jogador: " + nome + "\nTipo de Jogador: " + tipoJogador + "\nid: "  + id + "\n" + jogoG;
+    public String getTipo() {
+        return tipo;
     }
 
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
     //metodo de jogadas restantes utilizado para jogada da maquina
-    public int[] mostrarJogadasRestantes() {
-        return removerValoresDiferentesDeZero(jogoG.getJogadas());
-    }
+//    public int[] mostrarJogadasRestantes() {
+//        return removerValoresDiferentesDeZero(jogoG.getJogadas());
+//    }
 
     //metodo de para remover as jogadas ja usadas da maquina
     public static int[] removerValoresDiferentesDeZero(int[] array) {
@@ -98,5 +80,13 @@ public class Jogador implements Serializable {
                 novoArray[i] = i;
         }
         return novoArray;
+    }
+
+    public Dado[] jogarDados() {
+        int indexJogo = this.jogos.length;
+
+        //vai pegar o ultimo pois é o jogo que ta sendo jogado agora
+        JogoDados jogo = this.jogos[indexJogo-1];
+       return jogo.rolarDados();
     }
 }
