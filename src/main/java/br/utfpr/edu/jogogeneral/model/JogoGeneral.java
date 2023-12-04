@@ -13,7 +13,7 @@ public class JogoGeneral extends JogoDados implements Serializable {
     private Campeonato campeonato;
 
     public JogoGeneral() {
-        super(5, "Jogo General", 100F);
+        super(5, "Jogo General", 0F);
 
         jogadas = new int[13];
     }

@@ -18,8 +18,6 @@ const escolhaNumeroX = document.querySelector('#escolha-numero-13');
 const mostrarJogadasExecutadas = document.querySelector('#mostrar-jogadas-executadas');
 const topLogo = document.querySelector('.top-logo');
 const voltarBotao = document.querySelector('#voltarAplicacao');
-let mostrouTabela = false;
-
 //vai armazenar o resultado
 let results = [];
 
@@ -41,6 +39,20 @@ rollButton.addEventListener('click', () => {
 
         let cubesMoving = cubes.length; // Inicializa com o número total de cubos
         var index = 0;
+
+        if ($('#valorApostaInput').val().length === 0) {
+            toastr.error("Adicione o valor da aposta!")
+            rolling = false;
+            return;
+        }
+        axios.post('/controller/salvarAposta', {"valorAposta" : parseFloat($('#valorApostaInput').val()), "jogador" : players[jogadorDaVez].id})
+            .then(response => {
+                console.log(response.data);
+                $('#valorApostaInput').prop('readonly', true);
+            })
+            .catch(error => {
+                console.error(error);
+            });
 
         axios.get('/controller/rolarDados/'+ players[jogadorDaVez].id)
             .then(response => {
@@ -101,7 +113,7 @@ rollButton.addEventListener('click', () => {
                                     mostrarJogadasExecutadas.classList.remove('hidden')
                                     topLogo.classList.add('hidden')
 
-                                    if (maxRodadas+1 / players.length > 13) {
+                                    if (maxRodadas === 12) {
                                         rollButton.classList.add('hidden')
                                     } else {
                                         maxRodadas++;
@@ -196,6 +208,10 @@ function fazerJogada (opcao) {
             containerEscolhas.classList.add('hidden')
             mostrarJogadasExecutadas.classList.add('hidden')
             topLogo.classList.remove('hidden')
+            if (maxRodadas === 12) {
+                debugger;
+                calculaVitoriaDerrota();
+            }
         })
         .catch(error => {
             console.error(error);
@@ -238,7 +254,7 @@ document.getElementById("closeModalBtn").addEventListener("click", function() {
 const observador = new Proxy({}, {
     set: async function(target, key, value) {
         if (key === "jogadorDaVez") {
-            if ((maxRodadas+1 / players.length > 13)) {
+            if ((maxRodadas === 12)) {
                 rollButton.classList.add('hidden')
                 return
             }
@@ -314,3 +330,39 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
 });
 //FIM CARREGAR INFORMAÇÕES
+
+// INICIO CALCULA VITORIA DERROTA
+
+async function calculaVitoriaDerrota() {
+    debugger;
+    await axios.get('/controller/mostrarJogadas/'+ players[jogadorDaVez].id)
+        .then(response => {
+            console.log(response.data);
+            dados = response.data
+            let soma = dados[0] +
+                       dados[1] +
+                       dados[2] +
+                       dados[3] +
+                       dados[4] +
+                       dados[5] +
+                       dados[6] +
+                       dados[7] +
+                       dados[8] +
+                       dados[9] +
+                       dados[10] +
+                       dados[11];
+            debugger;
+            if (soma > (dados[12] * 2)) {
+                toastr.success("Vitória!")
+            } else {
+                toastr.success("Derrota!")
+            }
+
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+//FIM CALCULA DERROTA VITORIA

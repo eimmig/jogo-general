@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -126,6 +128,26 @@ public class ApplicationController {
         }
     }
 
+    //endpoint salvar aposta
+    @PostMapping(value = "/salvarAposta", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> salvarAposta(@RequestBody Map<String, Object> requestBody) {
+        float valorAposta = Float.parseFloat(requestBody.get("valorAposta").toString());
+        int jogadorFront = Integer.parseInt(requestBody.get("jogador").toString());
+
+        Jogador[] jogadores = this.campeonato.getJogadores();
+
+        try {
+            for (Jogador jogador : jogadores) {
+                if (Objects.equals(jogador.getId(), jogadorFront)) {
+                    this.campeonato.salvarAposta(valorAposta, jogador);
+                    return ResponseEntity.ok("Saldo Salvo com sucesso!");
+                }
+            }
+            return ResponseEntity.badRequest().body("Erro ao salvar aposta jogada: Jogador não encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao salvar aposta: " + e.getMessage());
+        }
+    }
 
     //botão de mostrar jogadas do jogador
     @GetMapping("/mostrarJogadas/{id}")
@@ -203,4 +225,23 @@ public class ApplicationController {
         this.campeonato.setJogoEscolhido(jogoEscolhidoDTO.getJogoEscolhido());
         return ResponseEntity.ok("JOGO CADASTRADO COM SUCESSO");
     }
+
+    //endpoint de setar saldo após final da aposta
+    @PostMapping(value = "/vitoriaDerrota", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> vitoriaDerrota(@RequestAttribute("jogador") int id, @RequestAttribute("vitoriaDerrota") String vitoriaDerrota) {
+        Jogador[] jogadores = this.campeonato.getJogadores();
+
+        for (Jogador jogador : jogadores) {
+            if (Objects.equals(jogador.getId(), id)) {
+                if (jogador instanceof Humano) {
+                    this.campeonato.setNovoSaldoJogador(jogador, vitoriaDerrota);
+                } else {
+                    return new ResponseEntity<>("Jogador do tipo máquina.", HttpStatus.BAD_REQUEST);
+                }
+                return ResponseEntity.ok("Saldo atualizado com sucesso");
+            }
+        }
+        return new ResponseEntity<>("Jogador não encontrado com o ID: " + id, HttpStatus.BAD_REQUEST);
+    }
+
 }

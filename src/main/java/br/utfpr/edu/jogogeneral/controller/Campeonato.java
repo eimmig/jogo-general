@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /*
@@ -142,7 +143,6 @@ public class Campeonato {
             jogadorDaVez = 0;
         }
 
-
         JogadorDTO[] jogadoresDTO = new JogadorDTO[this.numJogadores];
         for (int i = 0; i < numJogadores; i++) {
             jogadoresDTO[i] = new JogadorDTO(this.jogadores[i], "ok");
@@ -192,28 +192,41 @@ public class Campeonato {
     }
 
     public void realizarJogada(Jogador jogador, JogadaDTO jogada) {
-
-        JogoDados[] jogos = jogador.getJogos();
-        JogoGeneral ultimoJogoNaoNulo = null;
-        for (int i = jogos.length - 1; i >= 0; i--) {
-            if (jogos[i] != null) {
-                ultimoJogoNaoNulo = (JogoGeneral) jogos[i];
-                break;
-            }
-        }
+        JogoDados ultimoJogoNaoNulo = getLastGame(jogador);
         //a logica acima praticamente via pegar o ultimo registro que não é nulo. Esse pode ser validado da maneira que será sempre do jogo que esta sendo jogado agora
-        ((Humano) jogador).escolherJogada(jogada, ultimoJogoNaoNulo);
+        ((Humano) jogador).escolherJogada(jogada, (JogoGeneral) ultimoJogoNaoNulo);
     }
 
     public int[] mostrarJogadas(Jogador jogador) {
+        JogoDados ultimoJogoNaoNulo = getLastGame(jogador);
+        return jogador.mostrarJogadasExecutadas((JogoGeneral) ultimoJogoNaoNulo);
+    }
+
+    public void salvarAposta(float valorAposta, Jogador jogador) {
+        JogoDados ultimoJogoNaoNulo = getLastGame(jogador);
+        ultimoJogoNaoNulo.setSaldo(valorAposta);
+    }
+
+    public void setNovoSaldoJogador(Jogador jogador, String vitoriaDerrota) {
+        JogoDados ultimoJogoNaoNulo = getLastGame(jogador);
+        float saldo = ultimoJogoNaoNulo.getSaldo();
+
+        if (Objects.equals(vitoriaDerrota, "V")) {
+            jogador.setValorDisponivel(jogador.getValorDisponivel() + saldo);
+        } else {
+            jogador.setValorDisponivel(jogador.getValorDisponivel() - saldo);
+        }
+    }
+
+    private JogoDados getLastGame(Jogador jogador) {
         JogoDados[] jogos = jogador.getJogos();
-        JogoGeneral ultimoJogoNaoNulo = null;
+        JogoDados ultimoJogoNaoNulo = null;
         for (int i = jogos.length - 1; i >= 0; i--) {
             if (jogos[i] != null) {
-                ultimoJogoNaoNulo = (JogoGeneral) jogos[i];
+                ultimoJogoNaoNulo = jogos[i];
                 break;
             }
         }
-        return jogador.mostrarJogadasExecutadas(ultimoJogoNaoNulo);
+        return ultimoJogoNaoNulo;
     }
 }

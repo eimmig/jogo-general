@@ -8,7 +8,7 @@ public class JogoAzar extends JogoDados {
     }
 
     public JogoAzar() {
-        super(2, "Jogo Azar", 100F);
+        super(2, "Jogo Azar", 0F);
     }
 
     @Override

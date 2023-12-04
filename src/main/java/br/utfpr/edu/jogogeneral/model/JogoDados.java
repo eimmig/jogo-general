@@ -7,6 +7,7 @@ public abstract class JogoDados implements Estatistica{
     int nDados;
     String nomeJogo;
     float saldo;
+
     Dado[] dados;
 
     public JogoDados() {
@@ -22,6 +23,14 @@ public abstract class JogoDados implements Estatistica{
         for (int i = 0; i < nDados; i++) {
             dados[i] = new Dado();
         }
+    }
+
+    public float getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(float saldo) {
+        this.saldo = saldo;
     }
 
     public abstract Dado[] rolarDados();

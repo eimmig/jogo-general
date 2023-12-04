@@ -15,6 +15,8 @@ public abstract class Jogador implements Serializable {
     private String nome;
     private String tipo;
     private JogoDados[] jogos;
+    private float valorDisponivel;
+
     private final Integer id;
 
     private static int lastId = 0;
@@ -24,12 +26,14 @@ public abstract class Jogador implements Serializable {
         this.nome = nome;
         this.tipo = tipo;
         this.id = lastId++;
+        this.valorDisponivel = 100L;
     }
 
     public Jogador(int id) {
         this.nome = "";
         this.tipo = "M";
         this.id = lastId++;
+        this.valorDisponivel = 100L;
     }
 
     public String getNome() {
@@ -58,6 +62,14 @@ public abstract class Jogador implements Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public float getValorDisponivel() {
+        return valorDisponivel;
+    }
+
+    public void setValorDisponivel(float valorDisponivel) {
+        this.valorDisponivel = valorDisponivel;
     }
 
     //metodo de jogadas restantes utilizado para jogada da maquina

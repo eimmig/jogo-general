@@ -380,6 +380,27 @@ button[type="submit"]:hover {
 }
 
 .column {
-    flex: 0 0 calc(14% - 10px); /* 7 inputs em uma linha */
+    flex: 0 0 calc(14% - 10px);
     margin-right: 10px;
+}
+
+.cartoon-wood-button {
+    display: inline-block;
+    position: relative;
+    background-color: #f7d488;
+    padding: 15px;
+    border: 2px solid #dcb074;
+    border-radius: 8px;
+}
+
+.cartoonWoodInput {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #8b572a;
+    border-radius: 5px;
+    background-color: #fcd29c;
+}
+
+.cartoonWoodInput::placeholder {
+    color: #c49763;
 }
