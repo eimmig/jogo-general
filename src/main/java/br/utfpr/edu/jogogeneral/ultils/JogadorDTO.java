@@ -21,10 +21,18 @@ public class JogadorDTO<T> {
     @JsonProperty("message")
     private String message;
 
+    @JsonProperty("saldo")
+    private float saldo;
+
+    @JsonProperty("numeroJogos")
+    private int numeroJogos;
+
     public JogadorDTO(Jogador jogador, String message) {
         this.id = jogador.getId();
         this.nome = jogador.getNome();
         this.tipo = jogador.getTipo();
         this.message = message;
+        this.saldo = jogador.getValorDisponivel();
+        this.numeroJogos = jogador.getNumeroJogos();
     }
 }

@@ -45,13 +45,17 @@ public class ApplicationController {
 
         Jogador[] jogadores = this.campeonato.getJogadores();
 
-        int[] valores = {1,1,1,1,1};
+        int[] valores = new int[0];
 
         for (Jogador jogador : jogadores) {
             if (Objects.equals(jogador.getId(), id)) {
-                Dado[] dados = jogador.jogarDados();
-
-                valores = new int[]{dados[0].getSideUp(), dados[1].getSideUp(), dados[2].getSideUp(), dados[3].getSideUp(), dados[4].getSideUp()};
+                JogoDados ultimoJogo = this.campeonato.getLastGame(jogador);
+                Dado[] dados = jogador.jogarDados(ultimoJogo);
+                if (ultimoJogo instanceof JogoGeneral) {
+                    valores = new int[]{dados[0].getSideUp(), dados[1].getSideUp(), dados[2].getSideUp(), dados[3].getSideUp(), dados[4].getSideUp()};
+                } else {
+                    valores = new int[]{dados[0].getSideUp(), dados[1].getSideUp()};
+                }
 
                 return new ResponseEntity<>(valores, HttpStatus.OK);
             }
@@ -158,12 +162,7 @@ public class ApplicationController {
 
         for (Jogador jogador : jogadores) {
             if (Objects.equals(jogador.getId(), id)) {
-                if (jogador instanceof Humano) {
-                    //chama o jogarDados para o jogador passado
-                    jogadas = this.campeonato.mostrarJogadas(jogador);
-                } else {
-                    return new ResponseEntity<>("Jogador do tipo máquina.", HttpStatus.BAD_REQUEST);
-                }
+                jogadas = this.campeonato.mostrarJogadas(jogador);
                 return new ResponseEntity<>(jogadas, HttpStatus.OK);
             }
         }
@@ -191,26 +190,30 @@ public class ApplicationController {
 //    }
 //
 //
-//    //endpoint de jogada da máquina obs: esse endpoint esta com um pequeno bug, as vezes a maquina não consegue escolher a melhor jogada
-//    @PostMapping(value = "/jogadaMaquina", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<String> jogadaMaquina(@RequestBody JogadaDTO jogada) {
-//        Jogador[] jogadores = this.campeonato.getJogadores();
-//        try {
-//            for (Jogador jogador : jogadores) {
-//                if (Objects.equals(jogador.getId(), jogada.getJogador())) {
-//                    int[] opcoes = jogador.mostrarJogadasRestantes();
-//                    jogada.setOpcao(JogoGeneral.encontrarMelhorOpcao(jogada.getDados(), opcoes));
-//
-//                    jogador.escolherJogada(jogada);
-//                    this.campeonato.gravarEmArquivo("campeonato.dat");
-//                    return ResponseEntity.ok("Jogada Realizada com sucesso!");
-//                }
-//            }
-//            return ResponseEntity.badRequest().body("Erro ao realizar jogada: Jogador não encontrado");
-//        }catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Erro ao realizar jogada: " + e);
-//        }
-//    }
+    //endpoint de jogada da máquina obs: esse endpoint esta com um pequeno bug, as vezes a maquina não consegue escolher a melhor jogada
+    @PostMapping(value = "/jogadaMaquina", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> jogadaMaquina(@RequestBody JogadaDTO jogada) {
+        Jogador[] jogadores = this.campeonato.getJogadores();
+        try {
+            for (Jogador jogador : jogadores) {
+                if (Objects.equals(jogador.getId(), jogada.getJogador())) {
+                    if (jogador instanceof Maquina) {
+                        JogoDados ultimoJogo = this.campeonato.getLastGame(jogador);
+                        int[] opcoes = ((Maquina) jogador).aplicarEstrategia((JogoGeneral) ultimoJogo);
+                        jogada.setOpcao(JogoGeneral.encontrarMelhorOpcao(jogada.getDados(), opcoes));
+                        this.campeonato.realizarJogada(jogador, jogada);
+                    } else {
+                        throw new Exception("Jogador do tipo máquina.");
+                    }
+                    this.campeonato.gravarEmArquivo("campeonato.dat");
+                    return ResponseEntity.ok("Jogada Realizada com sucesso!");
+                }
+            }
+            return ResponseEntity.badRequest().body("Erro ao realizar jogada: Jogador não encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao realizar jogada: " + e);
+        }
+    }
 
     //endpoint chamado ao iniciar jogoGeneral ou jogoAzar o qual vai carregar as informações precisas para o jogo
     @GetMapping(value = "/carregarInformacoes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -225,23 +228,33 @@ public class ApplicationController {
         this.campeonato.setJogoEscolhido(jogoEscolhidoDTO.getJogoEscolhido());
         return ResponseEntity.ok("JOGO CADASTRADO COM SUCESSO");
     }
-
     //endpoint de setar saldo após final da aposta
     @PostMapping(value = "/vitoriaDerrota", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> vitoriaDerrota(@RequestAttribute("jogador") int id, @RequestAttribute("vitoriaDerrota") String vitoriaDerrota) {
+    public ResponseEntity<String> vitoriaDerrota(@RequestBody Map<String, Object> requestData) {
+        int id = (int) requestData.get("jogador");
+        String vitoriaDerrota = (String) requestData.get("vitoriaDerrota");
+
         Jogador[] jogadores = this.campeonato.getJogadores();
 
         for (Jogador jogador : jogadores) {
             if (Objects.equals(jogador.getId(), id)) {
-                if (jogador instanceof Humano) {
+                try {
                     this.campeonato.setNovoSaldoJogador(jogador, vitoriaDerrota);
-                } else {
-                    return new ResponseEntity<>("Jogador do tipo máquina.", HttpStatus.BAD_REQUEST);
+                    return ResponseEntity.ok("Saldo atualizado com sucesso");
+                } catch  (Exception e) {
+                    return new ResponseEntity<>("Esse jogador atingiu o limite de apostas", HttpStatus.BAD_REQUEST);
                 }
-                return ResponseEntity.ok("Saldo atualizado com sucesso");
+
             }
         }
         return new ResponseEntity<>("Jogador não encontrado com o ID: " + id, HttpStatus.BAD_REQUEST);
     }
 
+
+    //endpoint de atualizar o jogador
+    @PostMapping(value = "/atualizarJogador", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> atualizarJogador() {
+        this.campeonato.atualizarJogador();
+        return ResponseEntity.ok("JOGADOR ATUALIZADO COM SUCESSO");
+    }
 }

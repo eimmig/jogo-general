@@ -72,37 +72,30 @@ public abstract class Jogador implements Serializable {
         this.valorDisponivel = valorDisponivel;
     }
 
-    //metodo de jogadas restantes utilizado para jogada da maquina
-//    public int[] mostrarJogadasRestantes() {
-//        return removerValoresDiferentesDeZero(jogoG.getJogadas());
-//    }
+    public Dado[] jogarDados(JogoDados jogo) {
 
-    //metodo de para remover as jogadas ja usadas da maquina
-    public static int[] removerValoresDiferentesDeZero(int[] array) {
-        int count = 0;
-
-        for (int valor : array) {
-            if (valor != 0) {
-                count++;
-            }
-        }
-        int[] novoArray = new int[12-count];
-
-        for (int i = 0; i < novoArray.length; i++) {
-                novoArray[i] = i;
-        }
-        return novoArray;
-    }
-
-    public Dado[] jogarDados() {
-        int indexJogo = this.jogos.length;
-
-        //vai pegar o ultimo pois é o jogo que ta sendo jogado agora
-        JogoDados jogo = this.jogos[indexJogo-1];
        return jogo.rolarDados();
     }
 
     public int[] mostrarJogadasExecutadas(JogoGeneral jogo) {
         return jogo.getJogadas();
+    }
+
+    public void escolherJogada(JogadaDTO jogada, JogoGeneral jogo) {
+        jogo.pontuarJogada(jogada);
+    }
+
+    public int getNumeroJogos() {
+        if (jogos == null) {
+            return 0;
+        }
+
+        int contador = 0;
+        for (JogoDados jogo : jogos) {
+            if (jogo != null) {
+                contador++;
+            }
+        }
+        return contador;
     }
 }

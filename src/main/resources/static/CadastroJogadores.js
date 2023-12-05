@@ -26,7 +26,6 @@ startButton.addEventListener('click', () => {
 
     axios.post('/controller/iniciarCampeonato')
         .then (response => {
-            debugger;
             startButton.classList.add('hidden')
             toastr.success(response.data)
             window.location.href='EscolhaJogo.html'
@@ -97,7 +96,6 @@ mostrarTabela.addEventListener('click', async () => {
 
 //MODAL ADICIONAR PLAYERS
 openModal.addEventListener('click', () => {
-    debugger;
     modal.style.display = 'block';
 });
 
@@ -223,3 +221,33 @@ document.getElementById('tipo-jogador').addEventListener('change', () => {
         $('#numero-jogador').removeClass('hidden');
     }
 })
+
+document.addEventListener("DOMContentLoaded", async function() {
+    axios.get('/controller/carregarInformacoes')
+        .then(async function(response) {
+            let jogadores = response.data.jogadores;
+
+            let jogadoresTransformados = jogadores.map(jogador => ({
+                id: jogador.id,
+                nome: jogador.nome,
+                tipo: jogador.tipo,
+                saldo: jogador.saldo,
+                numeroJogos : jogador.numeroJogos
+            }));
+
+            players.push(...jogadoresTransformados);
+
+            if (players.length > 0) {
+                openModal.classList.add('hidden')
+                openRemovePlayerModal.classList.add('hidden')
+                startButton.classList.add('hidden')
+                mostrarTabela.classList.remove('hidden')
+                $('#fecharAplicacao').classList.remove('hidden')
+            }
+
+        })
+        .catch(function(error) {
+            // Tratar erros
+            console.error('Erro na requisição:', error);
+        });
+});

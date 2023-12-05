@@ -208,8 +208,7 @@ function fazerJogada (opcao) {
             containerEscolhas.classList.add('hidden')
             mostrarJogadasExecutadas.classList.add('hidden')
             topLogo.classList.remove('hidden')
-            if (maxRodadas === 12) {
-                debugger;
+            if (maxRodadas === 13) {
                 calculaVitoriaDerrota();
             }
         })
@@ -254,24 +253,29 @@ document.getElementById("closeModalBtn").addEventListener("click", function() {
 const observador = new Proxy({}, {
     set: async function(target, key, value) {
         if (key === "jogadorDaVez") {
-            if ((maxRodadas === 12)) {
-                rollButton.classList.add('hidden')
-                return
-            }
             if (players[value].tipo === "M") {
-                toastr.info("Agora é vez da Maquina Jogar!")
-                await rollButton.click();
-                setTimeout(async function () {
+                for (let i = 0; i < 13 && maxRodadas < 12; i++) {
+                    $('#valorApostaInput').val((players[value].saldo / 2 >= 1) ? (players[value].saldo / 2) : players[value].saldo);
+                    await rollButton.click();
+                    await new Promise(resolve => setTimeout(resolve, 5000)); // Aguarda 5 segundos
+
                     await jogadaMaquina();
-                }, 5000)
-            } else {
-                toastr.info("Agora é vez de " + players[value].nome + " Jogar!")
+
+                }
+                console.log(maxRodadas);
+                if (maxRodadas === 12) {
+                    rollButton.classList.add('hidden');
+                    await calculaVitoriaDerrota();
+                    voltarBotao.click();
+                    return;
+                }
             }
         }
         target[key] = value;
         return true;
     }
 });
+
 
 async function jogadaMaquina() {
     await axios.post('/controller/jogadaMaquina', {"opcao" : 1, "jogador" : players[jogadorDaVez].id, "dados" : results})
@@ -290,8 +294,16 @@ async function jogadaMaquina() {
 
 
 //VOLTAR
-voltarBotao.addEventListener('click', () => {
-    window.location.href = "index.html";
+voltarBotao.addEventListener('click', async () => {
+
+    await axios.post('/controller/atualizarJogador')
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    window.location.href = "EscolhaJogo.html";
 })
 
 //FIM VOLTAR
@@ -312,17 +324,18 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     axios.get('/controller/carregarInformacoes')
         .then(function(response) {
-            debugger;
             let jogadores = response.data.jogadores;
 
             let jogadoresTransformados = jogadores.map(jogador => ({
                 id: jogador.id,
                 nome: jogador.nome,
                 tipo: jogador.tipo,
+                saldo: jogador.saldo
             }));
 
             players.push(...jogadoresTransformados);
             jogadorDaVez = response.data.jogadorDaVez;
+            observador.jogadorDaVez = response.data.jogadorDaVez;
         })
         .catch(function(error) {
             // Tratar erros
@@ -334,7 +347,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 // INICIO CALCULA VITORIA DERROTA
 
 async function calculaVitoriaDerrota() {
-    debugger;
     await axios.get('/controller/mostrarJogadas/'+ players[jogadorDaVez].id)
         .then(response => {
             console.log(response.data);
@@ -351,14 +363,20 @@ async function calculaVitoriaDerrota() {
                        dados[9] +
                        dados[10] +
                        dados[11];
-            debugger;
             if (soma > (dados[12] * 2)) {
                 toastr.success("Vitória!")
+                toastr.info("Por favor, clique em voltar!")
             } else {
                 toastr.success("Derrota!")
             }
-
-
+             axios.post('/controller/vitoriaDerrota', {"vitoriaDerrota" : soma > (dados[12] * 2) ? "V" : "D", "jogador" : players[jogadorDaVez].id })
+                .then(response => {
+                    console.log(response.data);
+                    voltarBotao.click();
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         })
         .catch(error => {
             console.error(error);

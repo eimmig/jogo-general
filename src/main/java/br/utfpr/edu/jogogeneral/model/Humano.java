@@ -23,8 +23,5 @@ public class Humano extends Jogador implements  JogarComoHumano{
         return 0;
     }
 
-    @Override
-    public void escolherJogada(JogadaDTO jogada, JogoGeneral jogo) {
-        jogo.pontuarJogada(jogada);
-    }
+
 }

@@ -88,7 +88,14 @@ public class Campeonato {
         }
         this.setJogadores(novoArray);
         if (this.jogadores[0] != null) {
-            this.numJogadores = novoArray.length;
+            int contador = 0;
+
+            for (Object elemento : novoArray) {
+                if (elemento != null) {
+                    contador++;
+                }
+            }
+            this.numJogadores = contador;
 
         } else {
             this.numJogadores = 0;
@@ -150,51 +157,58 @@ public class Campeonato {
 
         CarregarInformacoesDTO informacoes = new CarregarInformacoesDTO(jogadorDaVez, jogadoresDTO);
 
-        if (jogadorDaVez + 1 > numJogadores-1) {
-            jogadorDaVez = 0;
-        } else {
-            jogadorDaVez++;
-        }
-
         return informacoes;
     }
 
     public void setJogoEscolhido(String jogoEscolhido) {
+        if (jogadorDaVez < 0 || jogadorDaVez >= jogadores.length) {
+            // Verifica se o índice jogadorDaVez está dentro dos limites válidos
+            throw new IllegalArgumentException("Índice de jogador inválido.");
+        }
+
         JogoDados novoJogo;
         if (jogoEscolhido.equals("Azar")) {
             novoJogo = new JogoAzar();
         } else {
             novoJogo = new JogoGeneral();
         }
-        // Verifica se o array jogos já foi inicializado
+
+        // Obtém o array de jogos do jogadorDaVez
         JogoDados[] jogos = this.jogadores[jogadorDaVez].getJogos();
+
         if (jogos == null) {
             // Se não foi inicializado, crie um novo array com tamanho 1
             this.jogadores[jogadorDaVez].setJogos(new JogoDados[]{novoJogo});
         } else {
-            // Se o array já foi inicializado, verifique se tem comprimento maior que zero
-            if (jogos.length > 0) {
-                // Se tiver comprimento maior que zero, crie um novo array com tamanho aumentado em 1
-                JogoDados[] novoArray = new JogoDados[jogos.length + 1];
+            // Se o array já foi inicializado, verifica se tem comprimento menor que 10
+                // Cria um novo array com tamanho aumentado em 1
+                JogoDados[] novoArray = new JogoDados[10];
 
-                // Copie os jogos existentes para o novo array
+                // Copia os jogos existentes para o novo array
                 System.arraycopy(jogos, 0, novoArray, 0, jogos.length);
 
                 novoArray[jogos.length] = novoJogo;
 
+                int quantoPreencheu = 0;
+                // Preenche as posições restantes do novo array com null
+                for (int i = jogos.length + 1; i < novoArray.length; i++) {
+                    novoArray[i] = null;
+                    quantoPreencheu++;
+                }
+                if (quantoPreencheu == 0) {
+                    // Se já possui 10 elementos, retorna erro
+                    throw new IllegalStateException("O jogador já possui o número máximo de jogos (10).");
+                }
+
                 // Atualiza a referência para o novo array
                 this.jogadores[jogadorDaVez].setJogos(novoArray);
-            } else {
-                // Se o array tem comprimento zero, crie um novo array com tamanho 1
-                this.jogadores[jogadorDaVez].setJogos(new JogoDados[]{novoJogo});
-            }
         }
     }
 
     public void realizarJogada(Jogador jogador, JogadaDTO jogada) {
         JogoDados ultimoJogoNaoNulo = getLastGame(jogador);
         //a logica acima praticamente via pegar o ultimo registro que não é nulo. Esse pode ser validado da maneira que será sempre do jogo que esta sendo jogado agora
-        ((Humano) jogador).escolherJogada(jogada, (JogoGeneral) ultimoJogoNaoNulo);
+         jogador.escolherJogada(jogada, (JogoGeneral) ultimoJogoNaoNulo);
     }
 
     public int[] mostrarJogadas(Jogador jogador) {
@@ -218,7 +232,7 @@ public class Campeonato {
         }
     }
 
-    private JogoDados getLastGame(Jogador jogador) {
+    public JogoDados getLastGame(Jogador jogador) {
         JogoDados[] jogos = jogador.getJogos();
         JogoDados ultimoJogoNaoNulo = null;
         for (int i = jogos.length - 1; i >= 0; i--) {
@@ -228,5 +242,13 @@ public class Campeonato {
             }
         }
         return ultimoJogoNaoNulo;
+    }
+
+    public void atualizarJogador() {
+        if (jogadorDaVez + 1 > numJogadores-1) {
+            jogadorDaVez = 0;
+        } else {
+            jogadorDaVez++;
+        }
     }
 }

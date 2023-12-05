@@ -1,5 +1,5 @@
 package br.utfpr.edu.jogogeneral.model;
 
 public interface JogarComoMaquina {
-    int aplicarEstrategia();
+    int[] aplicarEstrategia(JogoGeneral jogo);
 }
